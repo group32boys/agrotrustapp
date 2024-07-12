@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: const Text('Agrotrust'),
         actions: <Widget>[
           IconButton(
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.green,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             flex: 2,
             child: ListView.builder(
-              itemCount: 5, // Replace with actual number of sellers
+              itemCount: 10, // Replace with actual number of sellers
               itemBuilder: (BuildContext context, int index) {
                 Color vegetationColor = Colors.green.shade200;
 
@@ -210,7 +211,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    color:  Colors.grey,
+                    border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -220,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           CircleAvatar(
-                            backgroundImage: const AssetImage('images/sherman.jpg'),
+                            backgroundImage: const AssetImage('images/agro.jpg'),
                             backgroundColor: vegetationColor,
                             radius: 30, // Adjust as needed
                           ),
@@ -265,9 +267,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               _handleShopAction(context, index);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
+                              backgroundColor: Colors.green,
                             ),
-                            child: const Text('Shop House'),
+                            child: const Text('Shop House', style: TextStyle(fontWeight: FontWeight.bold),),
                           ),
                           const SizedBox(width: 10),
                           ElevatedButton(
@@ -275,9 +277,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               _handleSendMessage(context, index);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
+                              backgroundColor: Colors.green,
                             ),
-                            child: const Text('Contact'),
+                            child: const Text('Contact',  style: TextStyle(fontWeight: FontWeight.bold),),
                           ),
                         ],
                       ),
