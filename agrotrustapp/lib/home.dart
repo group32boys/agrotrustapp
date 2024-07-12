@@ -1,11 +1,5 @@
- import 'package:flutter/foundation.dart';
+  import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
-  
-
-
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,8 +11,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final List<Marker> markers = [];
 
   void _handleShopAction(BuildContext context, int index) {
     // Replace with your actual shop logic, e.g., navigate to shop screen
@@ -40,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Send Message'),
-          content: const Text('type message'),
+          content: const Text('Type message'),
           actions: <Widget>[
             TextButton(
               child: const Text('Close'),
@@ -107,12 +99,30 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: AssetImage('images/profile_image.jpg'),
+                    radius: 30,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'John Doe',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'john.doe@example.com',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
@@ -133,85 +143,145 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushNamed(context, '/help'); // Replace '/help' with your help route
               },
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.notifications),
+              title: const Text('Notifications'),
+              onTap: () {
+                // Implement notifications navigation
+                Navigator.pop(context); // Close the drawer
+                Navigator.pushNamed(context, '/notifications'); // Replace '/notifications' with your notifications route
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shopping_cart),
+              title: const Text('My Orders'),
+              onTap: () {
+                // Implement orders navigation
+                Navigator.pop(context); // Close the drawer
+                Navigator.pushNamed(context, '/orders'); // Replace '/orders' with your orders route
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.payment),
+              title: const Text('Payments'),
+              onTap: () {
+                // Implement payments navigation
+                Navigator.pop(context); // Close the drawer
+                Navigator.pushNamed(context, '/payments'); // Replace '/payments' with your payments route
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () {
+                // Implement logout logic
+                Navigator.pop(context); // Close the drawer
+                // Replace with logout functionality
+              },
+            ),
           ],
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           const Expanded(
-            // Rechild: const Center(
-                child: Text(
-                  'map',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 208, 209, 208),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-            
-          ))),
+            child: Center(
+              child: Text(
+                'Map',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 208, 209, 208),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
           Expanded(
             flex: 2,
             child: ListView.builder(
               itemCount: 5, // Replace with actual number of sellers
               itemBuilder: (BuildContext context, int index) {
-                // Replace with actual asset paths and seller details
                 Color vegetationColor = Colors.green.shade200;
 
-                return Card(
-                  elevation: 2,
+                return Container(
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    leading: CircleAvatar(
-                      backgroundImage: const AssetImage('images/sherman.jpg'),
-                      backgroundColor: vegetationColor,
-                      radius: 30, // Adjust as needed
-                    ),
-                    title: const Text(
-                      'Seller Name',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('Seller Address'),
-                        SizedBox(height: 5),
-                        Row(
-                          children: <Widget>[
-                            Icon(Icons.star, color: Colors.yellow),
-                            SizedBox(width: 5),
-                            Text('Rating: 4.6'),
-                            SizedBox(width: 10),
-                            Icon(Icons.location_on, color: Colors.blue),
-                            SizedBox(width: 5),
-                            Text('Distance: 1.2km'),
-                          ],
-                        ),
-                      ],
-                    ),
-                    trailing: Wrap(
-                      spacing: 5,
-                      children: <Widget>[
-                        ElevatedButton(
-                          onPressed: () {
-                            _handleShopAction(context, index);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundImage: const AssetImage('images/sherman.jpg'),
+                            backgroundColor: vegetationColor,
+                            radius: 30, // Adjust as needed
                           ),
-                          child: const Text('Shop House'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            _handleSendMessage(context, index);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                          const Row(
+                            children: <Widget>[
+                              Icon(Icons.star, color: Color.fromARGB(255, 230, 207, 6), size: 18),
+                              Text(
+                                '4.6',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 15, 15, 15),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Icon(Icons.location_on, color: Colors.blue, size: 18),
+                              Text(
+                                '1.2km',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          child: const Text('Contact'),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Seller Name',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Text(
+                        'Seller Address',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          ElevatedButton(
+                            onPressed: () {
+                              _handleShopAction(context, index);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                            ),
+                            child: const Text('Shop House'),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              _handleSendMessage(context, index);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
+                            child: const Text('Contact'),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 );
               },
