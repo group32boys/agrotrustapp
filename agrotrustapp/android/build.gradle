@@ -1,3 +1,6 @@
+plugins{
+    id("com.google.gms.google-services") version "4.4.2" apply false
+}
 allprojects {
     repositories {
         google()
@@ -6,7 +9,8 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
-subprojects {
+subprojects {   
+    project.buildDir = "${rootProject.buildDir}/${project.name}" 
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
@@ -16,3 +20,6 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+classpath 
+'com.google.gms:google-services:4.3.15'
+
