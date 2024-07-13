@@ -1,6 +1,7 @@
-   import 'package:agrotrustapp/home.dart';
+import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
+import 'package:agrotrustapp/splash.dart';
 import 'package:flutter/material.dart';
  
 //import 'package:testagrotrust/splash.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
     '/profile': (BuildContext context) => const ProfileScreen(),
     //'/checkout': (BuildContext context) => CheckoutScreen(),
     //'/confirmation': (BuildContext context) => ConfirmationScreen(),
+    '/splash': (BuildContext context) => const SplashScreen()
   };
 
    MyApp({super.key});
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'AgroTrust',
         debugShowCheckedModeBanner: false,
-        home:  const HomeScreen(),
+        home:  const SplashScreen(),
         routes: routes);
   }
 }
