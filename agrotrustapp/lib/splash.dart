@@ -28,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Navigate to the home screen after the animation
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()), // replace with your main screen
       );
