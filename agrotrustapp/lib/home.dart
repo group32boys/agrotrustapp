@@ -15,10 +15,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _handleShopAction(BuildContext context, int index) {
     // Replace with your actual shop logic, e.g., navigate to shop screen
     if (kDebugMode) {
-      print('Shop button pressed for index $index');
+      print('product button pressed for index $index');
     }
     // Example: navigate to shop screen
-    Navigator.pushNamed(context, '/shop'); // Replace '/shop' with your shop route
+    Navigator.pushNamed(context, '/products'); // Replace '/shop' with your shop route
   }
 
   void _handleSendMessage(BuildContext context, int index) {
@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            child: const Text('Shop House', style: TextStyle(fontWeight: FontWeight.bold),),
+                            child: const Text('Products', style: TextStyle(fontWeight: FontWeight.bold),),
                           ),
                           const SizedBox(width: 10),
                           ElevatedButton(
