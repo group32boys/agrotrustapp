@@ -67,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
-                'group32 boys help you to connect to the nearest trusted agrochemical sellers', // Replace with actual user's bio
+                'We help you to connect to the nearest trusted agrochemical sellers', // Replace with actual user's bio
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
