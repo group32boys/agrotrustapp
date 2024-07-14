@@ -1,22 +1,10 @@
-import 'package:agrotrustapp/home.dart';
+ import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
-import 'package:firebase_core/firebase_core.dart';  // Import Firebase core
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:agrotrustapp/product.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();  // Ensure Flutter is initialized
-
-  // Initialize Firebase
-  // ignore: body_might_complete_normally_catch_error
-  await Firebase.initializeApp().catchError((error) {
-    if (kDebugMode) {
-      print("Firebase initialization error: $error");
-    }
-  });
-
+void main() {
   runApp(MyApp());
 }
 
