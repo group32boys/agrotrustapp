@@ -9,7 +9,7 @@ class RegisterPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Register'),
-        backgroundColor: Color.fromARGB(255, 186, 228, 176),
+        backgroundColor: Colors.white,
       ),
       body: SafeArea(
         child: Center(
