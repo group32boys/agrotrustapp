@@ -1,4 +1,10 @@
- import 'package:agrotrustapp/home.dart';
+
+
+import 'package:agrotrustapp/home.dart';
+//import 'package:agrotrustapp/login.dart';
+
+ 
+
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
 //import 'package:agrotrustapp/splash.dart';
@@ -15,6 +21,9 @@ void main() async{
 class MyApp extends StatelessWidget {
   // Define routes for each screen
   final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
+
+
+
     '/home': (BuildContext context) => const HomeScreen(),
     '/search': (BuildContext context) => const SearchScreen(),
     '/product': (BuildContext context) => const ProductScreen(),
@@ -26,10 +35,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
+      
+
       title: 'AgroTrust',
       debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
       routes: routes,
     );
+
   }
 }
