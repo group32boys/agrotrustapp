@@ -1,4 +1,4 @@
-  import 'package:flutter/foundation.dart';
+ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,20 +13,16 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _handleShopAction(BuildContext context, int index) {
-    // Replace with your actual shop logic, e.g., navigate to shop screen
     if (kDebugMode) {
-      print('Shop button pressed for index $index');
+      print('Product button pressed for index $index');
     }
-    // Example: navigate to shop screen
-    Navigator.pushNamed(context, '/shop'); // Replace '/shop' with your shop route
+    Navigator.pushNamed(context, '/product');
   }
 
   void _handleSendMessage(BuildContext context, int index) {
-    // Replace with your actual send message logic
     if (kDebugMode) {
       print('Send message button pressed for index $index');
     }
-    // Example: show dialog or navigate to message screen
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -47,33 +43,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleSearch() {
-    // Replace with your actual search action
     if (kDebugMode) {
       print('Search button pressed');
     }
-    // Example: navigate to search screen or perform search functionality
-    Navigator.pushNamed(context, '/search'); // Replace '/search' with your search route
+    Navigator.pushNamed(context, '/search');
   }
 
   void _navigateToPage(int index) {
-    // Handle navigation to different pages based on index
     switch (index) {
       case 0:
-        // Navigate to home screen (already on home screen)
         break;
       case 1:
-        // Replace with your actual favorites screen navigation logic
         if (kDebugMode) {
           print('Navigate to Favorites');
         }
-        Navigator.pushNamed(context, '/favorites'); // Replace '/favorites' with your favorites route
+        Navigator.pushNamed(context, '/favorites');
         break;
       case 2:
-        // Replace with your actual profile screen navigation logic
         if (kDebugMode) {
           print('Navigate to Profile');
         }
-        Navigator.pushNamed(context, '/profile'); // Replace '/profile' with your profile route
+        Navigator.pushNamed(context, '/profile');
         break;
     }
   }
@@ -130,18 +120,16 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {
-                // Implement settings navigation
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushNamed(context, '/settings'); // Replace '/settings' with your settings route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
               leading: const Icon(Icons.help),
               title: const Text('Help'),
               onTap: () {
-                // Implement help navigation
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushNamed(context, '/help'); // Replace '/help' with your help route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/help');
               },
             ),
             const Divider(),
@@ -149,27 +137,24 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.notifications),
               title: const Text('Notifications'),
               onTap: () {
-                // Implement notifications navigation
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushNamed(context, '/notifications'); // Replace '/notifications' with your notifications route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/notifications');
               },
             ),
             ListTile(
               leading: const Icon(Icons.shopping_cart),
               title: const Text('My Orders'),
               onTap: () {
-                // Implement orders navigation
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushNamed(context, '/orders'); // Replace '/orders' with your orders route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/orders');
               },
             ),
             ListTile(
               leading: const Icon(Icons.payment),
               title: const Text('Payments'),
               onTap: () {
-                // Implement payments navigation
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushNamed(context, '/payments'); // Replace '/payments' with your payments route
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/payments');
               },
             ),
             const Divider(),
@@ -177,9 +162,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
               onTap: () {
-                // Implement logout logic
-                Navigator.pop(context); // Close the drawer
-                // Replace with logout functionality
+                Navigator.pop(context);
+                // Implement logout functionality
               },
             ),
           ],
@@ -203,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             flex: 2,
             child: ListView.builder(
-              itemCount: 10, // Replace with actual number of sellers
+              itemCount: 10, // Replace with static sellers or test data
               itemBuilder: (BuildContext context, int index) {
                 Color vegetationColor = Colors.green.shade200;
 
@@ -211,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color:  Colors.grey,
+                    color: Colors.grey,
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -224,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           CircleAvatar(
                             backgroundImage: const AssetImage('images/agro.jpg'),
                             backgroundColor: vegetationColor,
-                            radius: 30, // Adjust as needed
+                            radius: 30,
                           ),
                           const Row(
                             children: <Widget>[
@@ -269,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            child: const Text('Shop House', style: TextStyle(fontWeight: FontWeight.bold),),
+                            child: const Text('Products', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                           const SizedBox(width: 10),
                           ElevatedButton(
@@ -279,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            child: const Text('Contact',  style: TextStyle(fontWeight: FontWeight.bold),),
+                            child: const Text('Contact', style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
@@ -307,7 +291,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         onTap: (int index) {
-          // Handle navigation to different pages based on index
           _navigateToPage(index);
         },
       ),

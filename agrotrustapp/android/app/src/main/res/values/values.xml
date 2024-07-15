@@ -1,0 +1,8 @@
+<resources>
+    <string name="default_web_client_id">http://830401254084-c150hi3eo9nek53cs059h7rfibadastn.apps.googleusercontent.com/</string>
+    <string name="google_api_key">AIzaSyDE8-4D77HP9t5jwHKn8EdGlm1Z_KEozjI</string>
+    <string name="firebase_database_url">https://console.firebase.google.com/project/agrotrustapp/database/agrotrustapp-default-rtdb/data/~2F</string>
+    <string name="ga_trackingId">YOUR_GA_TRACKING_ID</string>
+    <string name="gcm_defaultSenderId">830401254084</string>
+    <string name="project_id">agrotrustapp</string>
+</resources>

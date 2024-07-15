@@ -1,6 +1,21 @@
-plugins{
-    id("com.google.gms.google-services") version "4.4.2" apply false
+buildscript {
+
+    ext.kotlin_version = "1.7.10"
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+
+         // Update to the latest stable version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath ' com.google.gms.google-services:4.4.2'
+        // classpath 'com.google.gms:google-services:4.3.14'  // Remove this line if using Firebase
+    }
 }
+
+
 allprojects {
     repositories {
         google()
@@ -9,10 +24,10 @@ allprojects {
 }
 
 rootProject.buildDir = "../build"
-subprojects {   
+subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}" 
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }
@@ -20,6 +35,3 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-classpath 
-'com.google.gms:google-services:4.3.15'
-
