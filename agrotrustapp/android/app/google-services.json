@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "258868804337",
+    "project_id": "agrotrust-18dc8",
+    "storage_bucket": "agrotrust-18dc8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258868804337:android:367fa7057204c7dc178750",
+        "android_client_info": {
+          "package_name": "com.example.agrotrustapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWIjZEksSC2ATG5gpF_Kq7_67tVQYZIAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
