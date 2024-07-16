@@ -1,4 +1,4 @@
-   import 'package:agrotrustapp/home.dart';
+import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
 import 'package:flutter/material.dart';
