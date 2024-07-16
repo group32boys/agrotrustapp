@@ -1,22 +1,19 @@
 class Seller {
+  final String id;
   final String name;
-  final String profilePictureUrl;
   final double latitude;
   final double longitude;
+  final String profilePictureUrl;
+  final String descripition;
+  final String location;
 
   Seller({
+    required this.id,
     required this.name,
-    required this.profilePictureUrl,
     required this.latitude,
     required this.longitude,
+    required this.profilePictureUrl,
+    required this.descripition,
+    required this.location,
   });
-
-  factory Seller.fromFirestore(Map<String, dynamic> data) {
-    return Seller(
-      name: data['name'] ?? '',
-      profilePictureUrl: data['profilePictureUrl'] ?? '',
-      latitude: (data['latitude'] as num).toDouble(),
-      longitude: (data['longitude'] as num).toDouble(),
-    );
-  }
 }

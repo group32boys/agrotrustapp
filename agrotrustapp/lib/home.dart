@@ -1,5 +1,16 @@
- import 'package:flutter/foundation.dart';
+ import 'package:agrotrustapp/details.dart';
+import 'package:agrotrustapp/history.dart';
+import 'package:agrotrustapp/models/seller.dart';
+import 'package:agrotrustapp/profile.dart';
+
+import 'package:agrotrustapp/services/firebase_service.dart';
+import 'package:agrotrustapp/services/location_services.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,289 +21,220 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Position? _currentPosition;
+  List<Seller> _sellers = [];
+  final FirebaseService _firebaseService = FirebaseService();
+  final LocationService _locationService = LocationService();
+  late final MapController _mapController;
+  int _selectedIndex = 0;
 
-  void _handleShopAction(BuildContext context, int index) {
-    if (kDebugMode) {
-      print('Product button pressed for index $index');
-    }
-    Navigator.pushNamed(context, '/product');
+  @override
+  void initState() {
+    super.initState();
+    _mapController = MapController();
+    _loadData();
   }
 
-  void _handleSendMessage(BuildContext context, int index) {
-    if (kDebugMode) {
-      print('Send message button pressed for index $index');
-    }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Send Message'),
-          content: const Text('Type message'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+  Future<void> _loadData() async {
+    _currentPosition = await _locationService.getCurrentPosition();
+    final sellers = await _firebaseService.fetchSellers();
+
+    sellers.sort((a, b) {
+      final distanceA = Geolocator.distanceBetween(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        a.latitude,
+        a.longitude,
+      );
+      final distanceB = Geolocator.distanceBetween(
+        _currentPosition!.latitude,
+        _currentPosition!.longitude,
+        b.latitude,
+        b.longitude,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+
+    setState(() {
+      _sellers = sellers;
+    });
+
+    _mapController.move(LatLng(_currentPosition!.latitude, _currentPosition!.longitude), 13.0);
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      // Handle bottom navigation bar item selection
+      if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HistoryScreen()),  // Navigate to History page
         );
-      },
-    );
-  }
-
-  void _handleSearch() {
-    if (kDebugMode) {
-      print('Search button pressed');
-    }
-    Navigator.pushNamed(context, '/search');
-  }
-
-  void _navigateToPage(int index) {
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        if (kDebugMode) {
-          print('Navigate to Favorites');
-        }
-        Navigator.pushNamed(context, '/favorites');
-        break;
-      case 2:
-        if (kDebugMode) {
-          print('Navigate to Profile');
-        }
-        Navigator.pushNamed(context, '/profile');
-        break;
-    }
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),  // Navigate to Profile page
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
+        title: const Text('Sellers Near You'),
         backgroundColor: Colors.green,
-        title: const Text('Agrotrust'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: _handleSearch,
-          ),
-        ],
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.green,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage('images/profile_image.jpg'),
-                    radius: 30,
+              child: Center(
+                child: Text(
+                  'Seller App',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    'John Doe',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'john.doe@example.com',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              leading: const Icon(Icons.home, color: Colors.green),
+              title: const Text('Home'),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/settings');
+                Navigator.pop(context);  // Close the drawer
+                // Optionally navigate to HomeScreen
               },
             ),
             ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('Help'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/help');
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('Notifications'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/notifications');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart),
+              leading: const Icon(Icons.shopping_cart, color: Colors.green),
               title: const Text('My Orders'),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/orders');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),  // Navigate to My Orders page
+                );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.payment),
-              title: const Text('Payments'),
+              leading: const Icon(Icons.history, color: Colors.green),
+              title: const Text('History'),
               onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/payments');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryScreen()),  // Navigate to History page
+                );
               },
             ),
-            const Divider(),
             ListTile(
-              leading: const Icon(Icons.logout),
+              leading: const Icon(Icons.person, color: Colors.green),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),  // Navigate to Profile page
+                );
+              },
+            ),
+            const Spacer(),
+            ListTile(
+              leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text('Logout'),
               onTap: () {
-                Navigator.pop(context);
-                // Implement logout functionality
+                // Handle logout functionality
               },
             ),
           ],
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const Expanded(
-            child: Center(
-              child: Text(
-                'Map',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 208, 209, 208),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: ListView.builder(
-              itemCount: 10, // Replace with static sellers or test data
-              itemBuilder: (BuildContext context, int index) {
-                Color vegetationColor = Colors.green.shade200;
-
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          CircleAvatar(
-                            backgroundImage: const AssetImage('images/agro.jpg'),
-                            backgroundColor: vegetationColor,
-                            radius: 30,
-                          ),
-                          const Row(
-                            children: <Widget>[
-                              Icon(Icons.star, color: Color.fromARGB(255, 230, 207, 6), size: 18),
-                              Text(
-                                '4.6',
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 15, 15, 15),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Icon(Icons.location_on, color: Colors.blue, size: 18),
-                              Text(
-                                '1.2km',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+      body: _currentPosition == null
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                SizedBox(
+                  height: 300,
+                  child: FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      initialZoom: 13.0,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        subdomains: const ['a', 'b', 'c'],
                       ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Seller Name',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Text(
-                        'Seller Address',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          ElevatedButton(
-                            onPressed: () {
-                              _handleShopAction(context, index);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            child: const Text('Products', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              _handleSendMessage(context, index);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            child: const Text('Contact', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ],
+                      MarkerLayer(
+                          markers: _sellers.map((seller) {
+                          return Marker(
+                            point: LatLng(seller.latitude, seller.longitude),
+                            width: 30,
+                            height: 30,
+                            child: const Icon(Icons.location_pin, color: Colors.green),
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
-                );
-              },
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _sellers.length,
+                    itemBuilder: (context, index) {
+                      final seller = _sellers[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          radius: 30,
+                          backgroundImage: NetworkImage(seller.profilePictureUrl),
+                        ),
+                        title: Text(seller.name),
+                        subtitle: Text('${Geolocator.distanceBetween(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                          seller.latitude,
+                          seller.longitude,
+                        ).toStringAsFixed(0)} meters away'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SellerDetailsScreen(seller: seller),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
+            icon: Icon(Icons.history),
+            label: 'History',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
-        onTap: (int index) {
-          _navigateToPage(index);
-        },
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
       ),
     );
   }
