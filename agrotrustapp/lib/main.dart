@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:agrotrustapp/home.dart';
+import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/product.dart';
 //import 'package:agrotrustapp/login.dart';
 
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
     '/search': (BuildContext context) => const SearchScreen(),
     '/product': (BuildContext context) => const ProductScreen(),
     '/profile': (BuildContext context) => const ProfileScreen(),
+    '/login': (BuildContext context) => const LoginPage(),
   };
 
   MyApp({super.key});

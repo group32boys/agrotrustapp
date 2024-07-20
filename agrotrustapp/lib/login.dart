@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'register.dart'; // Import the RegisterPage
+import 'home.dart'; // Import the HomePage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,6 +12,29 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _signIn() async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Navigate to the home screen after successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } catch (e) {
+      // Handle errors (e.g., show a snackbar with an error message)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign in: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Email',
@@ -65,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextField(
+                    controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -81,19 +108,22 @@ class _LoginPageState extends State<LoginPage> {
               // login button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                child: GestureDetector(
+                  onTap: _signIn,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                     ),
                   ),

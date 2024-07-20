@@ -1,6 +1,7 @@
  import 'package:agrotrustapp/details.dart';
 import 'package:agrotrustapp/history.dart';
 import 'package:agrotrustapp/models/seller.dart';
+import 'package:agrotrustapp/orders.dart';
 import 'package:agrotrustapp/profile.dart';
 
 import 'package:agrotrustapp/services/firebase_service.dart';
@@ -119,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),  // Navigate to My Orders page
+                  MaterialPageRoute(builder: (context) => const MyOrdersScreen()),  // Navigate to My Orders page
                 );
               },
             ),
