@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/product.dart';
-//import 'package:agrotrustapp/login.dart';
 
  
 
@@ -53,7 +52,7 @@ class MyApp extends StatelessWidget {
 
       title: 'AgroTrust',
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: const LoginPage(),
       routes: routes,
     );
 
