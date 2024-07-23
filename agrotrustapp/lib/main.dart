@@ -1,10 +1,10 @@
 import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
+import 'package:agrotrustapp/splash.dart';
 import 'package:flutter/material.dart';
- 
+
 //import 'package:testagrotrust/splash.dart';
- 
 
 //import 'screens/confirmation.dart';
 
@@ -24,14 +24,14 @@ class MyApp extends StatelessWidget {
     //'/confirmation': (BuildContext context) => ConfirmationScreen(),
   };
 
-   MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'AgroTrust',
         debugShowCheckedModeBanner: false,
-        home:  const HomeScreen(),
+        home: const SplashScreen(),
         routes: routes);
   }
 }
