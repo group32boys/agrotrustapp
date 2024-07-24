@@ -1,6 +1,6 @@
 // splash_screen.dart
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,7 +10,8 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -28,9 +29,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Navigate to the login screen after the animation
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     });
   }
@@ -44,11 +44,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueAccent, // replace with your brand color
+      backgroundColor: Colors.white,
       body: Center(
         child: FadeTransition(
           opacity: _animation,
-          child: Image.asset('assets/logo.png', width: 150, height: 150), // adjust size as needed
+          child: Image.asset('images/logo6.png', width: 350, height: 350),
         ),
       ),
     );

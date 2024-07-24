@@ -3,15 +3,12 @@ import 'package:agrotrustapp/history.dart';
 import 'package:agrotrustapp/models/seller.dart';
 import 'package:agrotrustapp/orders.dart';
 import 'package:agrotrustapp/profile.dart';
-
 import 'package:agrotrustapp/services/firebase_service.dart';
 import 'package:agrotrustapp/services/location_services.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -173,14 +170,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         subdomains: const ['a', 'b', 'c'],
                       ),
                       MarkerLayer(
-                          markers: _sellers.map((seller) {
-                          return Marker(
-                            point: LatLng(seller.latitude, seller.longitude),
-                            width: 30,
-                            height: 30,
-                            child: const Icon(Icons.location_pin, color: Colors.green),
-                          );
-                        }).toList(),
+                        markers: [
+                          Marker(
+                            width: 30.0,
+                            height: 30.0,
+                            point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                             child: const Icon(Icons.my_location, color: Colors.blue),
+                          ),
+                          ..._sellers.map((seller) {
+                            return Marker(
+                              width: 30.0,
+                              height: 30.0,
+                              point: LatLng(seller.latitude, seller.longitude),
+                              child:  const Icon(Icons.location_pin, color: Colors.green),
+                            );
+                          // ignore: unnecessary_to_list_in_spreads
+                          }).toList(),
+                        ],
                       ),
                     ],
                   ),
