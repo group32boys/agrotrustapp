@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home.dart'; // Import the HomePage
+import 'login.dart'; // Import the LoginPage
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
-  
+
   @override
+  // ignore: library_private_types_in_public_api
   _RegisterPageState createState() => _RegisterPageState();
 }
 
@@ -20,13 +21,15 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Navigate to the home screen after successful registration
+      // Navigate to the login screen after successful registration
       Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     } catch (e) {
       // Handle errors (e.g., show a snackbar with an error message)
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to register: $e')),
       );

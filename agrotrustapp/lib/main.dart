@@ -11,6 +11,7 @@ import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
 // import 'package:agrotrustapp/splash.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
