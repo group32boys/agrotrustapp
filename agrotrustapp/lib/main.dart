@@ -1,3 +1,4 @@
+import 'package:agrotrustapp/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'platform_helper.dart'; // Import the platform helper
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AgroTrust',
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: const SplashScreen(),
       routes: routes,
     );
   }
