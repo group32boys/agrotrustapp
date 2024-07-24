@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple,
+                  color: Color.fromARGB(255, 5, 104, 46),
                 ),
               ),
 
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
+                      color: Colors.green,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Center(
