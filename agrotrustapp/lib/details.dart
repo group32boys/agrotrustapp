@@ -1,5 +1,7 @@
-import 'package:agrotrustapp/models/seller.dart';
+ import 'package:agrotrustapp/models/seller.dart';
+import 'package:agrotrustapp/product.dart';
 import 'package:flutter/material.dart';
+ // Adjust the import based on your file structure
 
 class SellerDetailsScreen extends StatelessWidget {
   final Seller seller;
@@ -18,14 +20,18 @@ class SellerDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(seller.profilePictureUrl),
+            Center(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(seller.profilePictureUrl),
+              ),
             ),
             const SizedBox(height: 16),
-            Text(
-              seller.name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+            Center(
+              child: Text(
+                seller.name,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -43,12 +49,30 @@ class SellerDetailsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, color: Colors.green.shade700),
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                // Handle the action (e.g., Contact Seller)
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text('Contact Seller'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle the contact seller action
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Contact Seller'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to SellerProductsScreen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductScreen(sellerId: seller.id),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Products'),
+                ),
+              ],
             ),
           ],
         ),

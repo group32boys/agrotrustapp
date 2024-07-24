@@ -13,7 +13,7 @@ class MyOrdersScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
-          children: [
+          children: const [
             // Example order items; replace with your actual data
             OrderItem(orderId: '12345', date: '2024-07-15', total: '100.00 USD'),
             OrderItem(orderId: '67890', date: '2024-07-14', total: '50.00 USD'),
@@ -31,7 +31,7 @@ class OrderItem extends StatelessWidget {
   final String date;
   final String total;
 
-  const OrderItem({
+  const OrderItem({super.key, 
     required this.orderId,
     required this.date,
     required this.total,
@@ -47,9 +47,9 @@ class OrderItem extends StatelessWidget {
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
-        title: Text('Order ID: $orderId', style: TextStyle(color: Colors.green)),
+        title: Text('Order ID: $orderId', style: const TextStyle(color: Colors.green)),
         subtitle: Text('Date: $date\nTotal: $total', style: TextStyle(color: Colors.green.shade700)),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.green),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.green),
         onTap: () {
           // Handle item tap if needed
         },

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
   final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     '/home': (BuildContext context) => const HomeScreen(),
     '/search': (BuildContext context) => const SearchScreen(),
-    '/product': (BuildContext context) => const ProductScreen(),
+    '/product': (BuildContext context) => const ProductScreen(sellerId: '',),
     '/profile': (BuildContext context) => const ProfileScreen(),
   };
 
