@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'register.dart'; // Import the RegisterPage
-import 'home.dart'; // Import the HomePage
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-  
+// ignore: camel_case_types
+class Register_usersPage extends StatefulWidget {
+  const Register_usersPage({super.key});
+
   @override
   // ignore: library_private_types_in_public_api
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<Register_usersPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _signIn() async {
+  Future<void> _register() async {
     try {
-      await _auth.signInWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Navigate to the home screen after successful login
-      Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      // Show a success message or navigate to another screen
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful!')),
       );
     } catch (e) {
       // Handle errors (e.g., show a snackbar with an error message)
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign in: $e')),
+        SnackBar(content: Text('Failed to register: $e')),
       );
     }
   }
@@ -40,27 +38,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      appBar: AppBar(
+        title: const Text('Register'),
+      ),
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.account_circle,
-                size: 150,
-              ),
-              // welcome message
-              const Text(
-                'WELCOME TO AGROTRUST!\nWe connect Farmers to trusted Agrochemical Sellers',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 5, 104, 46),
-                ),
-              ),
-
-              // email textfield
+              // Email and Password fields
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Container(
@@ -80,10 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
-              // password textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Container(
@@ -104,14 +87,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              // login button
+              const SizedBox(height: 20),
+              // Register Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: GestureDetector(
-                  onTap: _signIn,
+                  onTap: _register,
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -120,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: const Center(
                       child: Text(
-                        'Login',
+                        'Register',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -130,38 +111,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 25),
-
-              // not a member? register now
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Not a member?',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterPage()),
-                      );
-                    },
-                    child: const Text(
-                      '  Register now',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
