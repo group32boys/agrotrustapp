@@ -8,7 +8,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('AGROTUST'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
