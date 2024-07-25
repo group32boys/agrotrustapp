@@ -2,7 +2,7 @@ import 'package:agrotrustapp/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart'; // Import the firebase_options.dart file
-import 'platform_helper.dart'; // Import the platform helper
+//import 'platform_helper.dart'; // Import the platform helper
 
 import 'package:agrotrustapp/home.dart';
 import 'package:agrotrustapp/login.dart';
