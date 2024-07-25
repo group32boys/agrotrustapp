@@ -1,99 +1,189 @@
 import 'package:flutter/material.dart';
+import 'package:agrotrustapp/models/product_details.dart';
+import 'package:agrotrustapp/data/product_sample.dart';
+import 'package:flutter/gestures.dart';
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({super.key, required this.product});
 
-class ProductScreen extends StatelessWidget {
-  const ProductScreen({super.key, required String sellerId});
+  final Product product;
+
+  @override
+  State<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  late TapGestureRecognizer readMoreGestureRecognizer;
+  bool showMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    readMoreGestureRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        setState(() {
+          showMore = !showMore;
+        });
+      };
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    readMoreGestureRecognizer.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Sample product data
-    final List<Map<String, String>> products = [
-      {
-        'name': 'Cypher-lacer',
-        'image': 'images/Cyper-Lacer.jpg',
-        'price': '\$10',
-        'description': 'An advanced cypher-lacer for all your crop pest control.'
-      },
-      {
-        'name': 'Rocket',
-        'image': 'images/Roket-1.jpg',
-        'price': '\$20',
-        'description': 'A powerful rocket for your insect control and pollinators attraction.'
-      },
-      {
-        'name': 'Troban',
-        'image': 'images/Troban-48-EC.jpg',
-        'price': '\$30',
-        'description': 'Troban 48 EC, a reliable tool for crop pest control.'
-      },
-    ];
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10.0),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10.0,
-          mainAxisSpacing: 10.0,
-        ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            height: 250,
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(widget.product.image),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Text(
+            widget.product.name,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Available in stock",
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: "\$${widget.product.price}",
+                        style: Theme.of(context).textTheme.titleLarge),
+                    TextSpan(
+                        text: "/${widget.product.unit}",
+                        style: Theme.of(context).textTheme.bodySmall),
+                  ],
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(
+                Icons.star,
+                size: 16,
+                color: Colors.yellow.shade800,
+              ),
+              Text(
+                "${widget.product.rating} (192)",
+              ),
+              const Spacer(),
+              SizedBox(
+                height: 30,
+                width: 30,
+                child: IconButton.filledTonal(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {},
+                  iconSize: 18,
+                  icon: const Icon(Icons.remove),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  "2 ${widget.product.unit}",
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+                width: 30,
+                child: IconButton.filledTonal(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {},
+                  iconSize: 18,
+                  icon: const Icon(Icons.add),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text("Description",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
+          RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodyMedium,
               children: [
-                Expanded(
-                  child: Image.asset(
-                    product['image']!,
-                    fit: BoxFit.cover,
-                  ),
+                TextSpan(
+                  text: showMore
+                      ? widget.product.description
+                      : '${widget.product.description.substring(0, widget.product.description.length - 100)}...',
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    product['name']!,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                TextSpan(
+                  recognizer: readMoreGestureRecognizer,
+                  text: showMore ? " Read less" : " Read more",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    product['price']!,
-                    style: const TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    product['description']!,
-                    style: const TextStyle(
-                      fontSize: 12.0,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle order button press
-                    },
-                    child: const Text('Order'),
-                  ),
-                ),
+                )
               ],
             ),
-          );
-        },
+          ),
+          const SizedBox(height: 20),
+          Text(
+            "Similar Products",
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 90,
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: 90,
+                  width: 80,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(products[index].image),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                );
+              },
+              separatorBuilder: (__, _) => const SizedBox(
+                width: 10,
+              ),
+              itemCount: products.length,
+            ),
+          ),
+
+        ],
       ),
     );
   }

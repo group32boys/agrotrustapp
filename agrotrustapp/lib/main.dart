@@ -9,6 +9,7 @@ import 'package:agrotrustapp/product.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
 // import 'package:agrotrustapp/splash.dart';
+import 'package:agrotrustapp/data/product_sample.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
   final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     '/home': (BuildContext context) => const HomeScreen(),
     '/search': (BuildContext context) => const SearchScreen(),
-    '/product': (BuildContext context) => const ProductScreen(sellerId: '',),
+    '/product': (BuildContext context) => const ProductScreen(sellerIds: '',),
     '/profile': (BuildContext context) => const ProfileScreen(),
   };
 

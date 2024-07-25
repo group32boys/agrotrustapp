@@ -65,7 +65,7 @@ class SellerDetailsScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductScreen(sellerId: seller.id),
+                        builder: (context) => ProductScreen(product: seller.id),
                       ),
                     );
                   },
