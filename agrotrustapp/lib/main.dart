@@ -1,30 +1,21 @@
 import 'package:agrotrustapp/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'platform_helper.dart'; // Import the platform helper
+import 'firebase_options.dart'; // Import the firebase_options.dart file
+//import 'platform_helper.dart'; // Import the platform helper
 
 import 'package:agrotrustapp/home.dart';
+import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/product.dart';
-// import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
-// import 'package:agrotrustapp/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (isAndroid) { // Use the platform helper instead of Platform.isAndroid
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyBWIjZEksSC2ATG5gpF_Kq7_67t",
-        appId: "1:258868804337:android:367fa7057204c7dc178750",
-        messagingSenderId: "258868804337",
-        projectId: "agrotrust-18dc8",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(MyApp());
 }
@@ -34,8 +25,9 @@ class MyApp extends StatelessWidget {
   final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     '/home': (BuildContext context) => const HomeScreen(),
     '/search': (BuildContext context) => const SearchScreen(),
-    '/product': (BuildContext context) => const ProductScreen(sellerId: '',),
+    '/product': (BuildContext context) => const ProductScreen(sellerId: ''),
     '/profile': (BuildContext context) => const ProfileScreen(),
+    '/login': (BuildContext context) => const LoginPage(),
   };
 
   MyApp({super.key});
