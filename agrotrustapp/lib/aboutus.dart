@@ -1,8 +1,8 @@
  import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class AboutusScreen extends StatelessWidget {
+  const AboutusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -83,21 +83,8 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Implement logout functionality
-                Navigator.pop(context); // Close profile screen
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.red,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Logout'),
-            ),
+            
+            
           ],
         ),
       ),

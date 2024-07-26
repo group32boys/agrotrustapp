@@ -1,4 +1,5 @@
- import 'package:flutter/material.dart';
+import 'package:agrotrustapp/aboutus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,8 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
-import 'orders.dart';
-import 'profile.dart';
+
 import 'services/firebase_service.dart';
 import 'services/location_services.dart';
 
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (index == 2) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     });
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Center(
                 child: Text(
-                  'Seller App',
+                  'AGROTRUST',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -115,16 +115,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.shopping_cart, color: Colors.green),
-              title: const Text('My Orders'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyOrdersScreen()),
-                );
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.history, color: Colors.green),
               title: const Text('History'),
               onTap: () {
@@ -135,12 +125,22 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person, color: Colors.green),
-              title: const Text('Profile'),
+              leading: const Icon(Icons.settings, color: Colors.green),
+              title: const Text('Settings'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.details, color: Colors.green),
+              title: const Text('About Us'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutusScreen()),
                 );
               },
             ),
@@ -185,8 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 30.0,
                             point: LatLng(seller.latitude, seller.longitude),
                             child: const Icon(Icons.location_pin, color: Colors.green),
-                          // ignore: unnecessary_to_list_in_spreads
-                          )).toList(),
+                          )),
                         ],
                       ),
                     ],
@@ -197,6 +196,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: _sellers.length,
                     itemBuilder: (context, index) {
                       final seller = _sellers[index];
+                      final distanceInMeters = Geolocator.distanceBetween(
+                        _currentPosition!.latitude,
+                        _currentPosition!.longitude,
+                        seller.latitude,
+                        seller.longitude,
+                      );
+                      final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                         padding: const EdgeInsets.all(12.0),
@@ -218,12 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${Geolocator.distanceBetween(
-                                  _currentPosition!.latitude,
-                                  _currentPosition!.longitude,
-                                  seller.latitude,
-                                  seller.longitude,
-                                ).toStringAsFixed(0)} meters away',
+                                '${distanceInKm.toStringAsFixed(2)} km away',
                               ),
                               Text(
                                 seller.location,
