@@ -1,4 +1,5 @@
- import 'package:flutter/material.dart';
+ import 'package:agrotrustapp/aboutus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
-import 'orders.dart';
+
 import 'profile.dart';
 import 'services/firebase_service.dart';
 import 'services/location_services.dart';
@@ -116,16 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.shopping_cart, color: Colors.green),
-              title: const Text('My Orders'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyOrdersScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.history, color: Colors.green),
               title: const Text('History'),
               onTap: () {
                 Navigator.push(
@@ -135,12 +126,22 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.settings, color: Colors.green),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.details, color: Colors.green),
               title: const Text('About Us'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(builder: (context) => const AboutusScreen()),
                 );
               },
             ),
@@ -260,8 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'History',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.details),
-            label: 'About Us',
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         selectedItemColor: Colors.green,
