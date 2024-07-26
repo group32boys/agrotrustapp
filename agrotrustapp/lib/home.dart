@@ -1,4 +1,4 @@
- import 'package:agrotrustapp/aboutus.dart';
+import 'package:agrotrustapp/aboutus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -8,7 +8,6 @@ import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
 
-import 'profile.dart';
 import 'services/firebase_service.dart';
 import 'services/location_services.dart';
 
@@ -77,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (index == 2) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     });
@@ -116,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.shopping_cart, color: Colors.green),
+              leading: const Icon(Icons.history, color: Colors.green),
               title: const Text('History'),
               onTap: () {
                 Navigator.push(
