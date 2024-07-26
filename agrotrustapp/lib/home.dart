@@ -1,4 +1,5 @@
 import 'package:agrotrustapp/aboutus.dart';
+import 'package:agrotrustapp/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -76,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (index == 2) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
         );
       }
     });
