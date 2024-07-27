@@ -4,12 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'platform_helper.dart'; // Import the platform helper
 
 import 'package:agrotrustapp/home.dart';
-import 'package:agrotrustapp/product.dart';
+import 'package:agrotrustapp/product_screen.dart';
 // import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:agrotrustapp/search.dart';
 // import 'package:agrotrustapp/splash.dart';
-import 'package:agrotrustapp/data/product_sample.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
   final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     '/home': (BuildContext context) => const HomeScreen(),
     '/search': (BuildContext context) => const SearchScreen(),
-    '/product': (BuildContext context) => const ProductScreen(sellerIds: '',),
+    '/product': (BuildContext context) => const ProductScreen(sellerId: '',),
     '/profile': (BuildContext context) => const ProfileScreen(),
   };
 

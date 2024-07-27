@@ -1,5 +1,5 @@
  import 'package:agrotrustapp/models/seller.dart';
-import 'package:agrotrustapp/product.dart';
+import 'package:agrotrustapp/product_screen.dart';
 import 'package:flutter/material.dart';
  // Adjust the import based on your file structure
 
@@ -65,7 +65,7 @@ class SellerDetailsScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductScreen(product: seller.id),
+                        builder: (context) => ProductScreen(sellerId: seller.id),
                       ),
                     );
                   },
