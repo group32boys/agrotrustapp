@@ -1,14 +1,16 @@
- import 'package:agrotrustapp/details.dart';
-import 'package:agrotrustapp/history.dart';
-import 'package:agrotrustapp/models/seller.dart';
-import 'package:agrotrustapp/orders.dart';
+import 'package:agrotrustapp/aboutus.dart';
 import 'package:agrotrustapp/profile.dart';
-import 'package:agrotrustapp/services/firebase_service.dart';
-import 'package:agrotrustapp/services/location_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'details.dart';
+import 'history.dart';
+import 'models/seller.dart';
+
+import 'services/firebase_service.dart';
+import 'services/location_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,7 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _sellers = sellers;
     });
 
-    _mapController.move(LatLng(_currentPosition!.latitude, _currentPosition!.longitude), 13.0);
+    _mapController.move(
+      LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+      13.0,
+    );
   }
 
   void _onItemTapped(int index) {
@@ -67,12 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HistoryScreen()),  // Navigate to History page
+          MaterialPageRoute(builder: (context) => const HistoryScreen()),
         );
       } else if (index == 2) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),  // Navigate to Profile page
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
         );
       }
     });
@@ -94,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Center(
                 child: Text(
-                  'Seller App',
+                  'AGROTRUST',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -107,18 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.home, color: Colors.green),
               title: const Text('Home'),
               onTap: () {
-                Navigator.pop(context);  // Close the drawer
-                // Optionally navigate to HomeScreen
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.shopping_cart, color: Colors.green),
-              title: const Text('My Orders'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyOrdersScreen()),  // Navigate to My Orders page
-                );
+                Navigator.pop(context);
               },
             ),
             ListTile(
@@ -127,17 +121,27 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HistoryScreen()),  // Navigate to History page
+                  MaterialPageRoute(builder: (context) => const HistoryScreen()),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person, color: Colors.green),
-              title: const Text('Profile'),
+              leading: const Icon(Icons.settings, color: Colors.green),
+              title: const Text('Settings'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),  // Navigate to Profile page
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.details, color: Colors.green),
+              title: const Text('About Us'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AboutusScreen()),
                 );
               },
             ),
@@ -175,17 +179,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 30.0,
                             height: 30.0,
                             point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                             child: const Icon(Icons.my_location, color: Colors.blue),
+                            child:  const Icon(Icons.my_location, color: Colors.blue),
                           ),
-                          ..._sellers.map((seller) {
-                            return Marker(
-                              width: 30.0,
-                              height: 30.0,
-                              point: LatLng(seller.latitude, seller.longitude),
-                              child:  const Icon(Icons.location_pin, color: Colors.green),
-                            );
-                          // ignore: unnecessary_to_list_in_spreads
-                          }).toList(),
+                          ..._sellers.map((seller) => Marker(
+                            width: 30.0,
+                            height: 30.0,
+                            point: LatLng(seller.latitude, seller.longitude),
+                            child: const Icon(Icons.location_pin, color: Colors.green),
+                          )),
                         ],
                       ),
                     ],
@@ -196,26 +197,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemCount: _sellers.length,
                     itemBuilder: (context, index) {
                       final seller = _sellers[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: NetworkImage(seller.profilePictureUrl),
+                      final distanceInMeters = Geolocator.distanceBetween(
+                        _currentPosition!.latitude,
+                        _currentPosition!.longitude,
+                        seller.latitude,
+                        seller.longitude,
+                      );
+                      final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(color: Colors.green, width: 1.0),
                         ),
-                        title: Text(seller.name),
-                        subtitle: Text('${Geolocator.distanceBetween(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                          seller.latitude,
-                          seller.longitude,
-                        ).toStringAsFixed(0)} meters away'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SellerDetailsScreen(seller: seller),
-                            ),
-                          );
-                        },
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            radius: 30,
+                            backgroundImage: NetworkImage(seller.profilePictureUrl),
+                          ),
+                          title: Text(
+                            seller.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${distanceInKm.toStringAsFixed(2)} km away',
+                              ),
+                              Text(
+                                seller.location,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SellerDetailsScreen(seller: seller),
+                              ),
+                            );
+                          },
+                        ),
                       );
                     },
                   ),
