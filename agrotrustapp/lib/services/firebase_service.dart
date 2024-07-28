@@ -7,7 +7,7 @@ class FirebaseService {
   Future<List<Seller>> fetchSellers() async {
     final snapshot = await _firestore.collection('sellers').get();
     return snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data();
 
       return Seller(
         id: doc.id,
@@ -27,7 +27,7 @@ class FirebaseService {
     final sellerRef = _firestore.collection('sellers').doc(sellerId);
 
     final sellerDoc = await sellerRef.get();
-    final data = sellerDoc.data() as Map<String, dynamic>?;
+    final data = sellerDoc.data();
 
     if (data != null) {
       final currentRating = data['rating'] as num? ?? 0.0;

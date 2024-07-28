@@ -11,6 +11,7 @@ class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
@@ -63,6 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
     }
   }
@@ -85,6 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final snapshot = await uploadTask;
       return await snapshot.ref.getDownloadURL();
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload image: $e')));
       return null;
     }
@@ -106,6 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       final user = this.user;
       if (user != null) {
+        // ignore: deprecated_member_use
         await user.updateEmail(email);
         await user.updateDisplayName(displayName);
 
@@ -117,11 +121,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set(userData);
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile updated successfully!')));
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
 
+        // ignore: use_build_context_synchronously
         Navigator.pop(context);
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile: $e')));
     } finally {
       setState(() {

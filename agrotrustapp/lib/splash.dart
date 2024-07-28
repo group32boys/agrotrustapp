@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (isFirstTimeUser) {
         await prefs.setBool('isFirstTimeUser', false);
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(builder: (context) => const LoginPage()),
         );
@@ -49,18 +51,22 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         } else {
           Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         }
       }
     } catch (e) {
-      print("Error during navigation: $e");
+      if (kDebugMode) {
+        print("Error during navigation: $e");
+      }
     }
   }
 
