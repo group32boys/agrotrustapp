@@ -1,9 +1,10 @@
-import 'dart:io';
-
+import 'dart:typed_data';
+import 'dart:io' if (dart.library.io) 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -18,8 +19,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final User? user = FirebaseAuth.instance.currentUser;
-  XFile? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+  dynamic _image; // Use dynamic type to handle both web and mobile
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -43,56 +44,90 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  Future<String?> _uploadImage(File image) async {
+  Future<void> _pickImage() async {
     try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('user_images')
-          .child(user!.uid + '.jpg');
-      await ref.putFile(image);
-      return await ref.getDownloadURL();
+      if (kIsWeb) {
+        final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          final bytes = await pickedFile.readAsBytes();
+          setState(() {
+            _image = bytes; // Store Uint8List for web
+          });
+        }
+      } else {
+        final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (pickedFile != null) {
+          setState(() {
+            _image = File(pickedFile.path); // Store File for mobile
+          });
+        }
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+    }
+  }
+
+  Future<String?> _uploadImage(dynamic image) async {
+    try {
+      String fileName = 'profile_pictures/${user!.uid}.jpg';
+      UploadTask uploadTask;
+
+      if (kIsWeb) {
+        // Web: Upload image data
+        final bytes = image as Uint8List; // Use Uint8List for web
+        uploadTask = FirebaseStorage.instance.ref(fileName).putData(bytes);
+      } else {
+        // Mobile: Upload file
+        final file = image as File;
+        uploadTask = FirebaseStorage.instance.ref(fileName).putFile(file);
+      }
+
+      final snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload image: $e')));
       return null;
     }
   }
 
   Future<void> _saveUserData() async {
-    if (_formKey.currentState!.validate()) {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
       String displayName = _nameController.text;
       String email = _emailController.text;
       String? photoURL;
 
-      if (_imageFile != null) {
-        photoURL = await _uploadImage(File(_imageFile!.path));
+      if (_image != null) {
+        photoURL = await _uploadImage(_image);
       }
 
       final user = this.user;
       if (user != null) {
         await user.updateEmail(email);
         await user.updateDisplayName(displayName);
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+
+        Map<String, dynamic> userData = {
           'displayName': displayName,
           'email': email,
           'photoURL': photoURL ?? user.photoURL,
-        });
+        };
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!')),
-        );
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set(userData);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile updated successfully!')));
 
         Navigator.pop(context);
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile: $e')));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-  }
-
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFile = pickedFile;
-    });
   }
 
   @override
@@ -101,85 +136,95 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _imageFile == null
-                        ? (user?.photoURL != null
-                            ? NetworkImage(user!.photoURL!)
-                            : const AssetImage('assets/default_profile.png')) as ImageProvider
-                        : FileImage(File(_imageFile!.path)),
-                    child: _imageFile == null && user?.photoURL == null
-                        ? const Icon(Icons.camera_alt, size: 50, color: Colors.white70)
-                        : null,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  labelStyle: TextStyle(color: Colors.green),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: Colors.green),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.green),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                ),
-                onPressed: _saveUserData,
-                child: const Text('Save', style: TextStyle(fontSize: 18)),
-              ),
-            ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: _saveUserData,
           ),
-        ),
+        ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    Center(
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundImage: _image != null
+                              ? (kIsWeb
+                                  ? MemoryImage(_image as Uint8List) // Web image
+                                  : FileImage(_image as File)) // Mobile image
+                              : (user?.photoURL != null
+                                  ? NetworkImage(user!.photoURL!)
+                                  : const AssetImage('assets/default_profile.png')) as ImageProvider<Object>?,
+                          child: _image == null && user?.photoURL == null
+                              ? const Icon(Icons.camera_alt, size: 50, color: Colors.white70)
+                              : null,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: TextStyle(color: Colors.green),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: TextStyle(color: Colors.green),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      ),
+                      onPressed: _saveUserData,
+                      child: const Text('Save', style: TextStyle(fontSize: 18)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

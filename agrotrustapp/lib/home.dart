@@ -1,4 +1,5 @@
 import 'package:agrotrustapp/aboutus.dart';
+import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -190,8 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text('Logout'),
               onTap: () {
-                // Handle logout functionality
-              },
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+            );
+          },
             ),
           ],
         ),
