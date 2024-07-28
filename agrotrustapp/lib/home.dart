@@ -1,4 +1,4 @@
-import 'package:agrotrustapp/aboutus.dart';
+ import 'package:agrotrustapp/aboutus.dart';
 import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:flutter/material.dart';
@@ -192,11 +192,11 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text('Logout'),
               onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
             ),
           ],
         ),
@@ -262,7 +262,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListTile(
                             leading: CircleAvatar(
                               radius: 30,
-                              backgroundImage: NetworkImage(seller.profilePictureUrl),
+                              backgroundImage: seller.profilePictureUrl.isNotEmpty
+                                  ? NetworkImage(seller.profilePictureUrl)
+                                  : const AssetImage('assets/placeholder.png') as ImageProvider,
                             ),
                             title: Text(
                               seller.name,
