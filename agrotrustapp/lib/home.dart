@@ -1,11 +1,13 @@
- import 'package:flutter/material.dart';
+ import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'services/firebase_storage_service.dart'; // Import Firebase Storage Service
 import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
+import 'history_entry.dart'; // Import the history entry model
 import 'orders.dart';
 import 'profile.dart';
 import 'services/firebase_service.dart';
@@ -23,9 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   List<Seller> _sellers = [];
   final FirebaseService _firebaseService = FirebaseService();
+  final FirebaseStorageService _storageService = FirebaseStorageService(); // Initialize the storage service
   final LocationService _locationService = LocationService();
   late final MapController _mapController;
   int _selectedIndex = 0;
+  final List<HistoryEntry> _historyEntries = [];
 
   @override
   void initState() {
@@ -38,7 +42,21 @@ class _HomeScreenState extends State<HomeScreen> {
     _currentPosition = await _locationService.getCurrentPosition();
     final sellers = await _firebaseService.fetchSellers();
 
-    sellers.sort((a, b) {
+    // Fetch profile picture URLs for all sellers
+    final updatedSellers = await Future.wait(sellers.map((seller) async {
+      final pictureUrl = await _storageService.getProfilePictureUrl(seller.profilePictureUrl);
+      return Seller(
+        id: seller.id,
+        name: seller.name,
+        latitude: seller.latitude,
+        longitude: seller.longitude,
+        location: seller.location,
+        profilePictureUrl: pictureUrl, 
+        descripition: seller.descripition, // Set the URL here
+      );
+    }));
+
+    updatedSellers.sort((a, b) {
       final distanceA = Geolocator.distanceBetween(
         _currentPosition!.latitude,
         _currentPosition!.longitude,
@@ -55,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     setState(() {
-      _sellers = sellers;
+      _sellers = updatedSellers;
     });
 
     _mapController.move(
@@ -67,11 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Handle bottom navigation bar item selection
       if (index == 1) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HistoryScreen()),
+          MaterialPageRoute(builder: (context) => HistoryScreen(historyEntries: _historyEntries)),
         );
       } else if (index == 2) {
         Navigator.push(
@@ -79,6 +96,17 @@ class _HomeScreenState extends State<HomeScreen> {
           MaterialPageRoute(builder: (context) => const ProfileScreen()),
         );
       }
+    });
+  }
+
+  void _addHistoryEntry(Seller seller) {
+    setState(() {
+      _historyEntries.add(
+        HistoryEntry(
+          sellerName: seller.name,
+          timestamp: DateTime.now(),
+        ),
+      );
     });
   }
 
@@ -130,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                  MaterialPageRoute(builder: (context) => HistoryScreen(historyEntries: _historyEntries)),
                 );
               },
             ),
@@ -178,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 30.0,
                             height: 30.0,
                             point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                            child:  const Icon(Icons.my_location, color: Colors.blue),
+                            child: const Icon(Icons.my_location, color: Colors.blue),
                           ),
                           ..._sellers.map((seller) => Marker(
                             width: 30.0,
@@ -202,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         seller.latitude,
                         seller.longitude,
                       );
-                      final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
+                      final distanceInKm = distanceInMeters / 1000;
                       return Container(
                         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                         padding: const EdgeInsets.all(12.0),
@@ -215,6 +243,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           leading: CircleAvatar(
                             radius: 30,
                             backgroundImage: NetworkImage(seller.profilePictureUrl),
+                            // Show a placeholder while loading
+                            onBackgroundImageError: (error, stackTrace) {
+                              // Handle image loading error
+                              if (kDebugMode) {
+                                print('Error loading image: $error');
+                              }
+                            },
                           ),
                           title: Text(
                             seller.name,
@@ -223,9 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${distanceInKm.toStringAsFixed(2)} km away',
-                              ),
+                              Text('${distanceInKm.toStringAsFixed(2)} km away'),
                               Text(
                                 seller.location,
                                 style: const TextStyle(color: Colors.grey),
@@ -233,6 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           onTap: () {
+                            _addHistoryEntry(seller); // Save history on tap
                             Navigator.push(
                               context,
                               MaterialPageRoute(
