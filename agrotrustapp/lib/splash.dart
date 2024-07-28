@@ -1,6 +1,8 @@
-// splash_screen.dart
 import 'package:flutter/material.dart';
-import 'login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home.dart';  // Import your home page
+import 'login.dart';  // Import your login page
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,8 +12,7 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -26,13 +27,41 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to the login screen after the animation
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    });
+    // Check if the user is a first-time user or already logged in
+    _navigateToNextScreen();
+  }
+
+  Future<void> _navigateToNextScreen() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isFirstTimeUser = prefs.getBool('isFirstTimeUser') ?? true;
+
+      // Simulate the splash screen delay
+      await Future.delayed(const Duration(seconds: 3));
+
+      if (isFirstTimeUser) {
+        await prefs.setBool('isFirstTimeUser', false);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      } else {
+        User? user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        }
+      }
+    } catch (e) {
+      print("Error during navigation: $e");
+    }
   }
 
   @override

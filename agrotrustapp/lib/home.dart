@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
-
 import 'services/firebase_service.dart';
 import 'services/location_services.dart';
 
@@ -16,7 +15,6 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -24,63 +22,87 @@ class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   List<Seller> _sellers = [];
   final FirebaseService _firebaseService = FirebaseService();
-  final LocationService _locationService = LocationService();
-  late final MapController _mapController;
+  String _selectedSortOption = 'location';
   int _selectedIndex = 0;
+  late MapController _mapController;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
+    _getCurrentLocation();
     _loadData();
   }
 
+  Future<void> _getCurrentLocation() async {
+    _currentPosition = await LocationService().getCurrentPosition();
+    setState(() {});
+  }
+
   Future<void> _loadData() async {
-    _currentPosition = await _locationService.getCurrentPosition();
-    final sellers = await _firebaseService.fetchSellers();
+    _sellers = await _firebaseService.fetchSellers();
+    _sortSellers(_sellers);
+    setState(() {});
+  }
 
-    sellers.sort((a, b) {
-      final distanceA = Geolocator.distanceBetween(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-        a.latitude,
-        a.longitude,
-      );
-      final distanceB = Geolocator.distanceBetween(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-        b.latitude,
-        b.longitude,
-      );
-      return distanceA.compareTo(distanceB);
-    });
+  void _sortSellers(List<Seller> sellers) {
+    if (_selectedSortOption == 'location') {
+      sellers.sort((a, b) {
+        final distanceA = Geolocator.distanceBetween(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+          a.latitude,
+          a.longitude,
+        );
+        final distanceB = Geolocator.distanceBetween(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+          b.latitude,
+          b.longitude,
+        );
+        return distanceA.compareTo(distanceB);
+      });
+    } else if (_selectedSortOption == 'rating') {
+      sellers.sort((a, b) => b.rating.compareTo(a.rating));
+    }
+  }
 
+  void _onSortOptionChanged(String? newValue) {
     setState(() {
-      _sellers = sellers;
+      _selectedSortOption = newValue!;
+      _sortSellers(_sellers);
     });
-
-    _mapController.move(
-      LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-      13.0,
-    );
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      // Handle bottom navigation bar item selection
-      if (index == 1) {
-        Navigator.push(
+    });
+
+    switch (_selectedIndex) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HistoryScreen()),
         );
-      } else if (index == 2) {
-        Navigator.push(
+        break;
+      case 2:
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ProfilePage()),
         );
-      }
-    });
+        break;
+    }
+  }
+
+  Future<void> _refreshSellers() async {
+    await _loadData();
   }
 
   @override
@@ -89,6 +111,24 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Sellers Near You'),
         backgroundColor: Colors.green,
+        actions: [
+          DropdownButton<String>(
+            value: _selectedSortOption,
+            icon: const Icon(Icons.sort, color: Colors.white),
+            dropdownColor: Colors.green,
+            items: const [
+              DropdownMenuItem(
+                value: 'location',
+                child: Text('Sort by Location'),
+              ),
+              DropdownMenuItem(
+                value: 'rating',
+                child: Text('Sort by Rating'),
+              ),
+            ],
+            onChanged: _onSortOptionChanged,
+          ),
+        ],
       ),
       drawer: Drawer(
         child: Column(
@@ -179,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 30.0,
                             height: 30.0,
                             point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                            child:  const Icon(Icons.my_location, color: Colors.blue),
+                            child: const Icon(Icons.my_location, color: Colors.blue),
                           ),
                           ..._sellers.map((seller) => Marker(
                             width: 30.0,
@@ -193,57 +233,89 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: _sellers.length,
-                    itemBuilder: (context, index) {
-                      final seller = _sellers[index];
-                      final distanceInMeters = Geolocator.distanceBetween(
-                        _currentPosition!.latitude,
-                        _currentPosition!.longitude,
-                        seller.latitude,
-                        seller.longitude,
-                      );
-                      final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
-                      return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: Colors.green, width: 1.0),
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 30,
-                            backgroundImage: NetworkImage(seller.profilePictureUrl),
+                  child: RefreshIndicator(
+                    onRefresh: _refreshSellers,
+                    child: ListView.builder(
+                      itemCount: _sellers.length,
+                      itemBuilder: (context, index) {
+                        final seller = _sellers[index];
+                        final distanceInMeters = Geolocator.distanceBetween(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                          seller.latitude,
+                          seller.longitude,
+                        );
+                        final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: Colors.green, width: 1.0),
                           ),
-                          title: Text(
-                            seller.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 30,
+                              backgroundImage: NetworkImage(seller.profilePictureUrl),
+                            ),
+                            title: Text(
+                              seller.name,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${distanceInKm.toStringAsFixed(2)} km away',
+                                ),
+                                Text(
+                                  seller.location,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                                Row(
+                                  children: [
+                                    RatingBar.builder(
+                                      initialRating: seller.rating,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: 20.0,
+                                      ignoreGestures: true,
+                                      itemBuilder: (context, _) => const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      onRatingUpdate: (rating) {},
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      seller.rating.toStringAsFixed(1),
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onTap: () async {
+                              final updatedRating = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SellerDetailsScreen(seller: seller),
+                                ),
+                              );
+
+                              if (updatedRating != null) {
+                                setState(() {
+                                  seller.rating = updatedRating;
+                                });
+                              }
+                            },
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${distanceInKm.toStringAsFixed(2)} km away',
-                              ),
-                              Text(
-                                seller.location,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SellerDetailsScreen(seller: seller),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

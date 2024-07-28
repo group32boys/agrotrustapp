@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'login.dart'; // Import the LoginPage
 
 class RegisterPage extends StatefulWidget {
@@ -14,13 +15,22 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Initialize Firestore
 
   Future<void> _register() async {
     try {
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // Create a Firestore document for the user
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'email': _emailController.text.trim(),
+        'displayName': '', // Add other fields as necessary
+        'photoURL': '',    // Add other fields as necessary
+      });
+
       // Navigate to the login screen after successful registration
       Navigator.pushReplacement(
         // ignore: use_build_context_synchronously
