@@ -8,7 +8,7 @@ class Product {
   final String description;
   final num price;
   final num units;
-  final num rating;
+
   
 
   const Product ({
@@ -19,34 +19,18 @@ class Product {
     required this.description,
     required this.price,
     required this.units,
-    required this.rating,
 
   });
 
   factory Product.fromDocument(DocumentSnapshot doc) {
     return Product(
       id: doc.id,
-      sellerId: doc['sellerId'],
       name: doc['name'],
-      description: doc['description'],
       image: doc['image'],
+      description: doc['description'],
       price: doc['price'],
       units: doc['units'],
-      rating: doc['rating'],
+      sellerId: doc['sellerId'],
     );
-  }
-
-  Map<String, dynamic> toMap(){
-    return {
-      'sellerId': sellerId,
-      'name': name,
-      'description': description,
-      'image': image,
-      'price': price,
-      'units': units,
-      'rating': rating,
-
-
-    };
   }
 }
