@@ -6,17 +6,19 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 import 'details.dart';
 import 'history.dart';
 import 'models/seller.dart';
 import 'services/firebase_service.dart';
 import 'services/location_services.dart';
+import 'settings.dart';
+import 'theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -32,7 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _mapController = MapController();
-    _getCurrentLocation();
+    _checkLocationAccessAndLoadData();
+  }
+
+  Future<void> _checkLocationAccessAndLoadData() async {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    if (themeProvider.isLocationAccessEnabled) {
+      _getCurrentLocation();
+    }
     _loadData();
   }
 
@@ -48,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _sortSellers(List<Seller> sellers) {
-    if (_selectedSortOption == 'location') {
+    if (_selectedSortOption == 'location' && _currentPosition != null) {
       sellers.sort((a, b) {
         final distanceA = Geolocator.distanceBetween(
           _currentPosition!.latitude,
@@ -173,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
                 );
               },
             ),
@@ -192,11 +201,11 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
               title: const Text('Logout'),
               onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
             ),
           ],
         ),
