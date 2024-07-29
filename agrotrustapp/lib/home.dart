@@ -1,4 +1,5 @@
- import 'package:agrotrustapp/aboutus.dart';
+import 'package:agrotrustapp/aboutus.dart';
+import 'package:agrotrustapp/history_service.dart';
 import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'details.dart';
+import 'package:agrotrustapp/details.dart';
 import 'history.dart';
 import 'models/seller.dart';
 import 'services/firebase_service.dart';
@@ -24,9 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Position? _currentPosition;
   List<Seller> _sellers = [];
   final FirebaseService _firebaseService = FirebaseService();
+  final HistoryService _historyService = HistoryService();
   String _selectedSortOption = 'location';
   int _selectedIndex = 0;
   late MapController _mapController;
+  List<Seller> _clickHistory = [];
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _mapController = MapController();
     _getCurrentLocation();
     _loadData();
+    _loadClickHistory();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -91,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HistoryScreen()),
+          MaterialPageRoute(
+            builder: (context) => HistoryScreen(clickHistory: _clickHistory),
+          ),
         );
         break;
       case 2:
@@ -105,6 +111,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refreshSellers() async {
     await _loadData();
+  }
+
+  void _recordClick(Seller seller) async {
+    setState(() {
+      _clickHistory.add(seller);
+    });
+    await _historyService.saveClickHistory(_clickHistory);
+  }
+
+  Future<void> _loadClickHistory() async {
+    final history = await _historyService.loadClickHistory();
+    setState(() {
+      _clickHistory = history;
+    });
   }
 
   @override
@@ -163,7 +183,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        HistoryScreen(clickHistory: _clickHistory),
+                  ),
                 );
               },
             ),
@@ -183,7 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AboutusScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AboutusScreen()),
                 );
               },
             ),
@@ -210,12 +234,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FlutterMap(
                     mapController: _mapController,
                     options: MapOptions(
-                      initialCenter: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      initialCenter: LatLng(_currentPosition!.latitude,
+                          _currentPosition!.longitude),
                       initialZoom: 13.0,
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                         subdomains: const ['a', 'b', 'c'],
                       ),
                       MarkerLayer(
@@ -223,15 +249,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Marker(
                             width: 30.0,
                             height: 30.0,
-                            point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                            child: const Icon(Icons.my_location, color: Colors.blue),
+                            point: LatLng(_currentPosition!.latitude,
+                                _currentPosition!.longitude),
+                            child: const Icon(Icons.my_location,
+                                color: Colors.blue),
                           ),
                           ..._sellers.map((seller) => Marker(
-                            width: 30.0,
-                            height: 30.0,
-                            point: LatLng(seller.latitude, seller.longitude),
-                            child: const Icon(Icons.location_pin, color: Colors.green),
-                          )),
+                                width: 30.0,
+                                height: 30.0,
+                                point:
+                                    LatLng(seller.latitude, seller.longitude),
+                                child: const Icon(Icons.location_pin,
+                                    color: Colors.green),
+                              )),
                         ],
                       ),
                     ],
@@ -250,76 +280,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           seller.latitude,
                           seller.longitude,
                         );
-                        final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
-                        return Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: Colors.green, width: 1.0),
+                        final distanceInKm = distanceInMeters / 1000;
+                        return ListTile(
+                          title: Text(seller.name),
+                          subtitle: Text(
+                              '${distanceInKm.toStringAsFixed(2)} km away'),
+                          trailing: RatingBar.builder(
+                            initialRating: seller.rating,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating) {},
                           ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: seller.profilePictureUrl.isNotEmpty
-                                  ? NetworkImage(seller.profilePictureUrl)
-                                  : const AssetImage('assets/placeholder.png') as ImageProvider,
-                            ),
-                            title: Text(
-                              seller.name,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${distanceInKm.toStringAsFixed(2)} km away',
-                                ),
-                                Text(
-                                  seller.location,
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                Row(
-                                  children: [
-                                    RatingBar.builder(
-                                      initialRating: seller.rating,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemSize: 20.0,
-                                      ignoreGestures: true,
-                                      itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      onRatingUpdate: (rating) {},
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      seller.rating.toStringAsFixed(1),
-                                      style: const TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            onTap: () async {
-                              final updatedRating = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SellerDetailsScreen(seller: seller),
-                                ),
-                              );
-
-                              if (updatedRating != null) {
-                                setState(() {
-                                  seller.rating = updatedRating;
-                                });
-                              }
-                            },
-                          ),
+                          onTap: () {
+                            _recordClick(seller); // Save click history
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SellerDetailsScreen(seller: seller),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -344,10 +333,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Profile',
           ),
         ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
       ),
     );
   }
 }
+
+class DetailsPage {}

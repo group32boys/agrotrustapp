@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Seller {
   final String id;
@@ -35,6 +35,36 @@ class Seller {
       longitude: (data['longitude'] as num?)?.toDouble() ?? 0.0,
       rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
       numberOfRatings: data['numberOfRatings'] as int? ?? 0,
+    );
+  }
+
+  // Convert Seller to Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'location': location,
+      'profilePictureUrl': profilePictureUrl,
+      'description': description,
+      'latitude': latitude,
+      'longitude': longitude,
+      'rating': rating,
+      'numberOfRatings': numberOfRatings,
+    };
+  }
+
+  // Convert Map to Seller
+  factory Seller.fromMap(Map<String, dynamic> map) {
+    return Seller(
+      id: map['id'],
+      name: map['name'],
+      location: map['location'],
+      profilePictureUrl: map['profilePictureUrl'],
+      description: map['description'],
+      latitude: map['latitude'],
+      longitude: map['longitude'],
+      rating: map['rating'],
+      numberOfRatings: map['numberOfRatings'],
     );
   }
 }
