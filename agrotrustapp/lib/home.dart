@@ -120,7 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sellers Near You'),
+        title: const Text(
+          'AGROTRUST',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.green,
         actions: [
           DropdownButton<String>(
@@ -130,11 +133,17 @@ class _HomeScreenState extends State<HomeScreen> {
             items: const [
               DropdownMenuItem(
                 value: 'location',
-                child: Text('Sort by Location'),
+                child: Text(
+                  'Sort by Location',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               DropdownMenuItem(
                 value: 'rating',
-                child: Text('Sort by Rating'),
+                child: Text(
+                  'Sort by Rating',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
             onChanged: _onSortOptionChanged,
@@ -172,7 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HistoryScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const HistoryScreen()),
                 );
               },
             ),
@@ -182,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const SettingsScreen()),
                 );
               },
             ),
@@ -192,7 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AboutusScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AboutusScreen()),
                 );
               },
             ),
@@ -219,12 +231,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: FlutterMap(
                     mapController: _mapController,
                     options: MapOptions(
-                      initialCenter: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      initialCenter: LatLng(_currentPosition!.latitude,
+                          _currentPosition!.longitude),
                       initialZoom: 13.0,
                     ),
                     children: [
                       TileLayer(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        urlTemplate:
+                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                         subdomains: const ['a', 'b', 'c'],
                       ),
                       MarkerLayer(
@@ -232,15 +246,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Marker(
                             width: 30.0,
                             height: 30.0,
-                            point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                            child: const Icon(Icons.my_location, color: Colors.blue),
+                            point: LatLng(_currentPosition!.latitude,
+                                _currentPosition!.longitude),
+                            child: const Icon(Icons.my_location,
+                                color: Colors.blue),
                           ),
                           ..._sellers.map((seller) => Marker(
-                            width: 30.0,
-                            height: 30.0,
-                            point: LatLng(seller.latitude, seller.longitude),
-                            child: const Icon(Icons.location_pin, color: Colors.green),
-                          )),
+                                width: 30.0,
+                                height: 30.0,
+                                point:
+                                    LatLng(seller.latitude, seller.longitude),
+                                child: const Icon(Icons.location_pin,
+                                    color: Colors.green),
+                              )),
                         ],
                       ),
                     ],
@@ -259,9 +277,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           seller.latitude,
                           seller.longitude,
                         );
-                        final distanceInKm = distanceInMeters / 1000; // Convert meters to kilometers
+                        final distanceInKm = distanceInMeters /
+                            1000; // Convert meters to kilometers
                         return Container(
-                          margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.1),
@@ -271,11 +291,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListTile(
                             leading: CircleAvatar(
                               radius: 30,
-                              backgroundImage: NetworkImage(seller.profilePictureUrl),
+                              backgroundImage:
+                                  NetworkImage(seller.profilePictureUrl),
                             ),
                             title: Text(
                               seller.name,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,7 +328,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       seller.rating.toStringAsFixed(1),
-                                      style: const TextStyle(color: Colors.grey),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -316,7 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               final updatedRating = await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SellerDetailsScreen(seller: seller),
+                                  builder: (context) =>
+                                      SellerDetailsScreen(seller: seller),
                                 ),
                               );
 
