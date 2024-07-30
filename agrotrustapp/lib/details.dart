@@ -41,7 +41,8 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
               Center(
                 child: CircleAvatar(
                   radius: 60,
-                  backgroundImage: NetworkImage(widget.seller.profilePictureUrl.startsWith('http')
+                  backgroundImage: NetworkImage(widget.seller.profilePictureUrl
+                          .startsWith('http')
                       ? widget.seller.profilePictureUrl
                       : 'https://example.com/placeholder.png'), // Default placeholder
                 ),
@@ -100,7 +101,11 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       ),
-                      child: const Text('Contact Seller'),
+                      child: const Text(
+                        'Contact Seller',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -111,7 +116,8 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductScreen(sellerId: widget.seller.id),
+                            builder: (context) =>
+                                ProductScreen(sellerId: widget.seller.id),
                           ),
                         );
                       },
@@ -122,7 +128,11 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       ),
-                      child: const Text('Products'),
+                      child: const Text(
+                        'Products',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
@@ -197,7 +207,11 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   ),
-                  child: const Text('Submit Rating'),
+                  child: const Text(
+                    'Submit Rating',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
