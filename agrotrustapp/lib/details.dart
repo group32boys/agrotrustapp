@@ -25,174 +25,183 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
         title: Text(widget.seller.name),
         backgroundColor: Colors.green,
       ),
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.green.shade100, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(widget.seller.profilePictureUrl),
-              ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green.shade100, Colors.white],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: Text(
-                widget.seller.name,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade800,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundImage: NetworkImage(widget.seller.profilePictureUrl.startsWith('http')
+                      ? widget.seller.profilePictureUrl
+                      : 'https://example.com/placeholder.png'), // Default placeholder
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: Text(
-                'Location: ${widget.seller.location}',
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  widget.seller.name,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade800,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: Text(
+                  'Location: ${widget.seller.location}',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.green.shade600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Description:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 46, 125, 50),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.seller.description,
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.green.shade600,
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Description:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 46, 125, 50),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.seller.description,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.green.shade600,
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Rate this Seller:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 46, 125, 50),
-              ),
-            ),
-            const SizedBox(height: 8),
-            RatingBar.builder(
-              initialRating: _userRating,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 30.0,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                setState(() {
-                  _userRating = rating;
-                });
-              },
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Leave a Feedback:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 46, 125, 50),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _feedbackController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Enter your feedback here',
-                hintStyle: TextStyle(color: Colors.green.shade400),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                contentPadding: const EdgeInsets.all(12.0),
-              ),
-            ),
-            const Spacer(),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              const SizedBox(height: 24),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle the contact seller action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    ),
-                    child: const Text('Contact Seller'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to SellerProductsScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductScreen(sellerId: widget.seller.id),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle the contact seller action
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Text('Contact Seller'),
                     ),
-                    child: const Text('Products'),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      if (_userRating > 0) {
-                        await _firebaseService.updateSellerRating(
-                          widget.seller.id,
-                          _userRating,
-                          _feedbackController.text,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Navigate to SellerProductsScreen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductScreen(sellerId: widget.seller.id),
+                          ),
                         );
-                        Navigator.pop(context, _userRating);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: const Text('Products'),
                     ),
-                    child: const Text('Submit Rating'),
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              const Text(
+                'Rate this Seller:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 46, 125, 50),
+                ),
+              ),
+              const SizedBox(height: 8),
+              RatingBar.builder(
+                initialRating: _userRating,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                itemCount: 5,
+                itemSize: 30.0,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {
+                  setState(() {
+                    _userRating = rating;
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Leave a Feedback:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 46, 125, 50),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _feedbackController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Enter your feedback here',
+                  hintStyle: TextStyle(color: Colors.green.shade400),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  contentPadding: const EdgeInsets.all(12.0),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_userRating > 0) {
+                      await _firebaseService.updateSellerRating(
+                        widget.seller.id,
+                        _userRating,
+                        _feedbackController.text,
+                      );
+                      Navigator.pop(context, _userRating);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  ),
+                  child: const Text('Submit Rating'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
