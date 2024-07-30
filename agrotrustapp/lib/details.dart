@@ -22,7 +22,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.seller.name),
+        title: Text(widget.seller.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), ),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
