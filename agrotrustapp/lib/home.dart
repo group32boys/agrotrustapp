@@ -281,34 +281,79 @@ class _HomeScreenState extends State<HomeScreen> {
                           seller.longitude,
                         );
                         final distanceInKm = distanceInMeters / 1000;
-                        return ListTile(
-                          title: Text(seller.name),
-                          subtitle: Text(
-                              '${distanceInKm.toStringAsFixed(2)} km away'),
-                          trailing: RatingBar.builder(
-                            initialRating: seller.rating,
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 5,
-                            itemPadding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            itemBuilder: (context, _) => const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                            ),
-                            onRatingUpdate: (rating) {},
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: Colors.green, width: 1.0),
                           ),
-                          onTap: () {
-                            _recordClick(seller); // Save click history
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    SellerDetailsScreen(seller: seller),
-                              ),
-                            );
-                          },
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              radius: 30,
+                              backgroundImage:
+                                  NetworkImage(seller.profilePictureUrl),
+                            ),
+                            title: Text(
+                              seller.name,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${distanceInKm.toStringAsFixed(2)} km away',
+                                ),
+                                Text(
+                                  seller.location,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
+                                Row(
+                                  children: [
+                                    RatingBar.builder(
+                                      initialRating: seller.rating,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: 20.0,
+                                      ignoreGestures: true,
+                                      itemBuilder: (context, _) => const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                      ),
+                                      onRatingUpdate: (rating) {},
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      seller.rating.toStringAsFixed(1),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onTap: () async {
+                              _recordClick(seller);
+                              final updatedRating = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SellerDetailsScreen(seller: seller),
+                                ),
+                              );
+
+                              if (updatedRating != null) {
+                                setState(() {
+                                  seller.rating = updatedRating;
+                                });
+                              }
+                            },
+                          ),
                         );
                       },
                     ),
