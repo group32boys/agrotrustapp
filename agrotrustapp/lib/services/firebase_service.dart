@@ -1,28 +1,66 @@
-import 'package:agrotrustapp/models/seller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:agrotrustapp/models/seller.dart';
+import 'package:agrotrustapp/models/product_model.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Fetch sellers
   Future<List<Seller>> fetchSellers() async {
     final snapshot = await _firestore.collection('sellers').get();
     return snapshot.docs.map((doc) {
-      final data = doc.data();
-
-      return Seller(
-        id: doc.id,
-        name: data['name'] ?? 'Unknown',
-        latitude: (data['latitude'] as num?)?.toDouble() ?? 0.0,
-        longitude: (data['longitude'] as num?)?.toDouble() ?? 0.0,
-        profilePictureUrl: data['profilePictureUrl'] ?? '',
-        description: data['description'] ?? 'No description provided',
-        location: data['location'] ?? 'Unknown location',
-        rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
-        numberOfRatings: data['numberOfRatings'] as int? ?? 0,
-      );
+      doc.data();
+      return Seller.fromDocument(doc);
     }).toList();
   }
 
+  // Fetch products for a seller
+  Future<List<Product>> fetchProducts(String sellerId) async {
+    final snapshot = await _firestore
+        .collection('sellers')
+        .doc(sellerId)
+        .collection('products')
+        .get();
+
+    return snapshot.docs.map((doc) {
+      return Product.fromDocument(doc);
+    }).toList();
+  }
+
+  // Add a product for a seller
+  Future<void> addProduct(String sellerId, Product product) async {
+    final productRef = _firestore
+        .collection('sellers')
+        .doc(sellerId)
+        .collection('products')
+        .doc(product.id);
+
+    await productRef.set(product.toMap());
+  }
+
+  // Update a product for a seller
+  Future<void> updateProduct(String sellerId, Product product) async {
+    final productRef = _firestore
+        .collection('sellers')
+        .doc(sellerId)
+        .collection('products')
+        .doc(product.id);
+
+    await productRef.update(product.toMap());
+  }
+
+  // Delete a product for a seller
+  Future<void> deleteProduct(String sellerId, String productId) async {
+    final productRef = _firestore
+        .collection('sellers')
+        .doc(sellerId)
+        .collection('products')
+        .doc(productId);
+
+    await productRef.delete();
+  }
+
+  // Update seller rating
   Future<void> updateSellerRating(String sellerId, double rating, String feedback) async {
     final sellerRef = _firestore.collection('sellers').doc(sellerId);
 
@@ -38,13 +76,13 @@ class FirebaseService {
       await sellerRef.update({
         'rating': newRating,
         'numberOfRatings': numberOfRatings + 1,
-        'feedback': FieldValue.arrayUnion([feedback]), // Assuming feedback is a list of comments
+        'feedback': FieldValue.arrayUnion([feedback]),
       });
     } else {
       await sellerRef.set({
         'rating': rating,
         'numberOfRatings': 1,
-        'feedback': [feedback], // Assuming feedback is a list of comments
+        'feedback': [feedback],
       });
     }
   }
