@@ -10,6 +10,7 @@ class SellerDetailsScreen extends StatefulWidget {
   const SellerDetailsScreen({required this.seller, super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SellerDetailsScreenState createState() => _SellerDetailsScreenState();
 }
 
@@ -197,6 +198,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         _userRating,
                         _feedbackController.text,
                       );
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context, _userRating);
                     }
                   },
