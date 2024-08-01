@@ -87,7 +87,7 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Price: Ugx${product.price.toStringAsFixed(2)}',
+              'Price: Ugx ${product.price.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 18, color: Colors.teal, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
