@@ -1,5 +1,6 @@
 import 'package:agrotrustapp/models/seller.dart';
 import 'package:agrotrustapp/product.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'services/firebase_service.dart';
@@ -10,6 +11,7 @@ class SellerDetailsScreen extends StatefulWidget {
   const SellerDetailsScreen({required this.seller, super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SellerDetailsScreenState createState() => _SellerDetailsScreenState();
 }
 
@@ -41,11 +43,18 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
               Center(
                 child: CircleAvatar(
                   radius: 60,
-                  backgroundImage: NetworkImage(widget.seller.profilePictureUrl
-                          .startsWith('http')
-                      ? widget.seller.profilePictureUrl
-                      : 'https://example.com/placeholder.png'), // Default placeholder
-                ),
+                              backgroundImage: widget.seller.profilePictureUrl.isNotEmpty
+                                  ? NetworkImage(widget.seller.profilePictureUrl.trim()) // Trim any extraneous whitespace
+                                  : null,
+                              child: widget.seller.profilePictureUrl.isEmpty
+                                  ? const Icon(Icons.person, color: Colors.white)
+                                   : null,
+                                 onBackgroundImageError: (exception, stackTrace) {
+      // Handle image loading error
+                                  if (kDebugMode) {
+                                  print('Error loading image: $exception');
+      } // Default placeholder
+  }),
               ),
               const SizedBox(height: 16),
               Center(
@@ -197,6 +206,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         _userRating,
                         _feedbackController.text,
                       );
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context, _userRating);
                     }
                   },
