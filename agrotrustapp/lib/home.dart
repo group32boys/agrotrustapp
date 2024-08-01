@@ -1,6 +1,7 @@
 import 'package:agrotrustapp/aboutus.dart';
 import 'package:agrotrustapp/login.dart';
 import 'package:agrotrustapp/profile.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -19,6 +20,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -291,9 +293,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListTile(
                             leading: CircleAvatar(
                               radius: 30,
-                              backgroundImage:
-                                  NetworkImage(seller.profilePictureUrl),
-                            ),
+                              backgroundImage: seller.profilePictureUrl.isNotEmpty
+                                  ? NetworkImage(seller.profilePictureUrl.trim()) // Trim any extraneous whitespace
+                                  : null,
+                              child: seller.profilePictureUrl.isEmpty
+                                  ? const Icon(Icons.person, color: Colors.white)
+                                   : null,
+                                 onBackgroundImageError: (exception, stackTrace) {
+      // Handle image loading error
+                                  if (kDebugMode) {
+                                  print('Error loading image: $exception');
+      }
+      // Optionally, you can set a default image here
+                      }),
                             title: Text(
                               seller.name,
                               style:

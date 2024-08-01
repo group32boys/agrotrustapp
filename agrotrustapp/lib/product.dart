@@ -6,7 +6,7 @@ import 'package:agrotrustapp/product_details.dart';
 class ProductScreen extends StatelessWidget {
   final String sellerId;
 
-  ProductScreen({required this.sellerId});
+  const ProductScreen({super.key, required this.sellerId});
 
   Future<List<Product>> _fetchProducts() async {
     final service = FirebaseService();
@@ -18,7 +18,7 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products'),
+        title: const Text('Products'),
         backgroundColor: Colors.teal,
         elevation: 0,
       ),
@@ -26,28 +26,28 @@ class ProductScreen extends StatelessWidget {
         future: _fetchProducts(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red)));
+            return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No products found.', style: TextStyle(fontSize: 18, color: Colors.grey)));
+            return const Center(child: Text('No products found.', style: TextStyle(fontSize: 18, color: Colors.grey)));
           }
 
           final products = snapshot.data!;
           return ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products[index];
               return Card(
                 elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.all(16),
                   leading: product.image.isNotEmpty
-                      ? Container(
+                      ? SizedBox(
                           width: 80,
                           height: 80,
                           child: ClipRRect(
@@ -62,19 +62,19 @@ class ProductScreen extends StatelessWidget {
                           width: 80,
                           height: 80,
                           color: Colors.grey[300],
-                          child: Icon(Icons.image, size: 40, color: Colors.grey),
+                          child: const Icon(Icons.image, size: 40, color: Colors.grey),
                         ),
                   title: Text(
                     product.name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   subtitle: Text(
                     '${product.description}\n${product.units}gms',
-                    style: TextStyle(color: Colors.black54),
+                    style: const TextStyle(color: Colors.black54),
                   ),
                   trailing: Text(
                     '\$${product.price.toStringAsFixed(2)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.teal,
                     ),
