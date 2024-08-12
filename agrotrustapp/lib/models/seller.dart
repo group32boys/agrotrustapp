@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Seller {
   final String id;
@@ -10,6 +10,8 @@ class Seller {
   final double longitude;
   double rating;
   int numberOfRatings;
+  final String email; // New field for email
+  final String phoneNumber; // New field for phone number
 
   Seller({
     required this.id,
@@ -21,10 +23,13 @@ class Seller {
     required this.longitude,
     required this.rating,
     required this.numberOfRatings,
+    required this.email, // Initialize email
+    required this.phoneNumber, // Initialize phone number
   });
 
   factory Seller.fromDocument(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    
     return Seller(
       id: doc.id,
       name: data['name'] ?? 'Unknown',
@@ -35,6 +40,8 @@ class Seller {
       longitude: (data['longitude'] as num?)?.toDouble() ?? 0.0,
       rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
       numberOfRatings: data['numberOfRatings'] as int? ?? 0,
+      email: data['email'] ?? 'No email provided', // Handle null email
+      phoneNumber: data['phoneNumber'] ?? 'No phone number provided', // Handle null phone number
     );
   }
 }

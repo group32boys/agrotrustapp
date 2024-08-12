@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'home.dart';  // Import your home page
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';  // Import your login page
 
 class SplashScreen extends StatefulWidget {
@@ -28,41 +26,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    // Check if the user is a first-time user or already logged in
+    // Navigate to the login page after the splash screen delay
     _navigateToNextScreen();
   }
 
   Future<void> _navigateToNextScreen() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool isFirstTimeUser = prefs.getBool('isFirstTimeUser') ?? true;
-
       // Simulate the splash screen delay
       await Future.delayed(const Duration(seconds: 3));
 
-      if (isFirstTimeUser) {
-        await prefs.setBool('isFirstTimeUser', false);
-        Navigator.pushReplacement(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      } else {
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          Navigator.pushReplacement(
-            // ignore: use_build_context_synchronously
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-          );
-        } else {
-          Navigator.pushReplacement(
-            // ignore: use_build_context_synchronously
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-          );
-        }
-      }
+      // Navigate to the login page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     } catch (e) {
       if (kDebugMode) {
         print("Error during navigation: $e");

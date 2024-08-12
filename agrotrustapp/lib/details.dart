@@ -1,9 +1,10 @@
-import 'package:agrotrustapp/models/seller.dart';
-import 'package:agrotrustapp/product.dart';
+ import 'package:agrotrustapp/product.dart';
+import 'package:agrotrustapp/services/firebase_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'services/firebase_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'models/seller.dart'; // For URL schemes
 
 class SellerDetailsScreen extends StatefulWidget {
   final Seller seller;
@@ -20,11 +21,82 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
   double _userRating = 0.0;
   final FirebaseService _firebaseService = FirebaseService();
 
+  void _contactSeller() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Contact Seller'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (widget.seller.email.isNotEmpty)
+                ListTile(
+                  leading: const Icon(Icons.email),
+                  title: const Text('Email'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _launchEmail(widget.seller.email);
+                  },
+                ),
+              if (widget.seller.phoneNumber.isNotEmpty)
+                ListTile(
+                  leading: const Icon(Icons.phone),
+                  title: const Text('Call'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _launchPhone(widget.seller.phoneNumber);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _launchEmail(String email) async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: email,
+    );
+
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    } else {
+      // Handle the error if the email app cannot be opened
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open email app')),
+      );
+    }
+  }
+
+  Future<void> _launchPhone(String phoneNumber) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      // Handle the error if the phone app cannot be opened
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not make the call')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.seller.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), ),
+        title: Text(
+          widget.seller.name,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
@@ -43,18 +115,18 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
               Center(
                 child: CircleAvatar(
                   radius: 60,
-                              backgroundImage: widget.seller.profilePictureUrl.isNotEmpty
-                                  ? NetworkImage(widget.seller.profilePictureUrl.trim()) // Trim any extraneous whitespace
-                                  : null,
-                              child: widget.seller.profilePictureUrl.isEmpty
-                                  ? const Icon(Icons.person, color: Colors.white)
-                                   : null,
-                                 onBackgroundImageError: (exception, stackTrace) {
-      // Handle image loading error
-                                  if (kDebugMode) {
-                                  print('Error loading image: $exception');
-      } // Default placeholder
-  }),
+                  backgroundImage: widget.seller.profilePictureUrl.isNotEmpty
+                      ? NetworkImage(widget.seller.profilePictureUrl.trim())
+                      : null,
+                  child: widget.seller.profilePictureUrl.isEmpty
+                      ? const Icon(Icons.person, color: Colors.white)
+                      : null,
+                  onBackgroundImageError: (exception, stackTrace) {
+                    if (kDebugMode) {
+                      print('Error loading image: $exception');
+                    }
+                  },
+                ),
               ),
               const SizedBox(height: 16),
               Center(
@@ -100,9 +172,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Handle the contact seller action
-                      },
+                      onPressed: _contactSeller,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
@@ -112,8 +182,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                       ),
                       child: const Text(
                         'Contact Seller',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -121,12 +190,10 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Navigate to SellerProductsScreen
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProductScreen(sellerId: widget.seller.id),
+                            builder: (context) => ProductScreen(sellerId: widget.seller.id),
                           ),
                         );
                       },
@@ -139,8 +206,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                       ),
                       child: const Text(
                         'Products',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -219,8 +285,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                   ),
                   child: const Text(
                     'Submit Rating',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
