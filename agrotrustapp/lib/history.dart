@@ -20,9 +20,9 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Example order history data
     final List<Order> orders = [
-      Order(itemName: 'Pesticide A', date: '2024-07-15', status: 'Completed'),
-      Order(itemName: 'Fertilizer B', date: '2024-07-14', status: 'Pending'),
-      Order(itemName: 'Seed C', date: '2024-07-13', status: 'Shipped'),
+      Order(itemName: 'Weed Master', date: '2024-07-15', status: 'Completed'),
+      Order(itemName: 'Tick Burn', date: '2024-07-14', status: 'Pending'),
+      Order(itemName: 'Arphid killer', date: '2024-07-13', status: 'Shipped'),
       // Add more Order objects here
     ];
 
