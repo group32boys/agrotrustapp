@@ -11,27 +11,35 @@ class SellerDetailsScreen extends StatefulWidget {
   const SellerDetailsScreen({required this.seller, super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SellerDetailsScreenState createState() => _SellerDetailsScreenState();
 }
 
 class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
   final TextEditingController _feedbackController = TextEditingController();
+  final TextEditingController _orderIdController = TextEditingController();
   double _userRating = 0.0;
   final FirebaseService _firebaseService = FirebaseService();
-  final TextEditingController _orderIdController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.seller.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold), ),
+        title: Text(
+          widget.seller.name,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
-          color: Colors.white,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.green.shade100, Colors.white],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -39,15 +47,16 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                 child: CircleAvatar(
                   radius: 60,
                   backgroundImage: widget.seller.profilePictureUrl.isNotEmpty
-                      ? NetworkImage(widget.seller.profilePictureUrl.trim())
+                      ? NetworkImage(widget.seller.profilePictureUrl.trim()) // Trim any extraneous whitespace
                       : null,
                   child: widget.seller.profilePictureUrl.isEmpty
                       ? const Icon(Icons.person, color: Colors.white)
                       : null,
                   onBackgroundImageError: (exception, stackTrace) {
+                    // Handle image loading error
                     if (kDebugMode) {
                       print('Error loading image: $exception');
-                    }
+                    } // Default placeholder
                   },
                 ),
               ),
@@ -107,8 +116,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                       ),
                       child: const Text(
                         'Contact Seller',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -120,8 +128,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProductScreen(sellerId: widget.seller.id),
+                            builder: (context) => ProductScreen(sellerId: widget.seller.id),
                           ),
                         );
                       },
@@ -134,33 +141,11 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                       ),
                       child: const Text(
                         'Products',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Order ID:',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 46, 125, 50),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _orderIdController,
-                decoration: InputDecoration(
-                  hintText: 'Enter order ID here',
-                  hintStyle: TextStyle(color: Colors.green.shade400),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  contentPadding: const EdgeInsets.all(12.0),
-                ),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -192,6 +177,27 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
               ),
               const SizedBox(height: 24),
               const Text(
+                'Order ID:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 46, 125, 50),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _orderIdController,
+                decoration: InputDecoration(
+                  hintText: 'Enter your order ID here',
+                  hintStyle: TextStyle(color: Colors.green.shade400),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  contentPadding: const EdgeInsets.all(12.0),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
                 'Leave a Feedback:',
                 style: TextStyle(
                   fontSize: 20,
@@ -216,7 +222,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
               Center(
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (_userRating > 0) {
+                    if (_userRating > 0 && _orderIdController.text.isNotEmpty) {
                       await _firebaseService.updateSellerRating(
                         widget.seller.id,
                         _userRating,
@@ -225,6 +231,11 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                       );
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context, _userRating);
+                    } else {
+                      // Handle missing rating or order ID
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please provide a rating and order ID')),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -236,8 +247,7 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> {
                   ),
                   child: const Text(
                     'Submit Rating',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
