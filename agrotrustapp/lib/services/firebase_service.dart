@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:agrotrustapp/models/seller.dart';
 import 'package:agrotrustapp/models/product_model.dart';
@@ -65,36 +65,30 @@ class FirebaseService {
   }
 
   // Update seller rating
-  Future<void> updateSellerRating(String sellerId, double rating, String feedback, String orderId) async {
+  Future<void> updateSellerRating(String sellerId, double rating, String feedback) async {
     final sellerRef = _firestore.collection('sellers').doc(sellerId);
 
-    await _firestore.runTransaction((transaction) async {
-      final sellerSnapshot = await transaction.get(sellerRef);
+    final sellerDoc = await sellerRef.get();
+    final data = sellerDoc.data();
 
-      if (!sellerSnapshot.exists) {
-        throw Exception("Seller not found!");
-      }
+    if (data != null) {
+      final currentRating = data['rating'] as num? ?? 0.0;
+      final numberOfRatings = data['numberOfRatings'] as int? ?? 0;
 
-      final currentRating = sellerSnapshot.get('rating') ?? 0.0;
-      final numberOfRatings = sellerSnapshot.get('numberOfRatings') ?? 0;
+      final newRating = ((currentRating * numberOfRatings) + rating) / (numberOfRatings + 1);
 
-      final newNumberOfRatings = numberOfRatings + 1;
-      final newRating =
-          ((currentRating * numberOfRatings) + rating) / newNumberOfRatings;
-
-      transaction.update(sellerRef, {
+      await sellerRef.update({
         'rating': newRating,
-        'numberOfRatings': newNumberOfRatings,
+        'numberOfRatings': numberOfRatings + 1,
+        'feedback': FieldValue.arrayUnion([feedback]),
       });
-
-      final feedbackRef = sellerRef.collection('feedback').doc();
-      transaction.set(feedbackRef, {
+    } else {
+      await sellerRef.set({
         'rating': rating,
-        'feedback': feedback,
-        'orderId': orderId,
-        'timestamp': FieldValue.serverTimestamp(),
+        'numberOfRatings': 1,
+        'feedback': [feedback],
       });
-    });
+    }
   }
 
   // Upload a profile picture for a seller
