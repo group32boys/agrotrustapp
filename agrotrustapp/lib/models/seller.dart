@@ -4,6 +4,7 @@ class Seller {
   final String id;
   final String name;
   final String location;
+  final String contact;
   final String profilePictureUrl;
   final String description;
   final double latitude;
@@ -15,6 +16,7 @@ class Seller {
     required this.id,
     required this.name,
     required this.location,
+    required this.contact,
     required this.profilePictureUrl,
     required this.description,
     required this.latitude,
@@ -29,6 +31,7 @@ class Seller {
       id: doc.id,
       name: data['name'] ?? 'Unknown',
       location: data['location'] ?? 'Unknown location',
+      contact: data['contact'] ?? 'Unknown',
       profilePictureUrl: data['profilePictureUrl'] ?? '',
       description: data['description'] ?? 'No description provided',
       latitude: (data['latitude'] as num?)?.toDouble() ?? 0.0,

@@ -18,6 +18,16 @@ class FirebaseService {
     }).toList();
   }
 
+  // Fetch a single seller by ID
+  Future<Seller?> fetchSellerById(String sellerId) async {
+    final sellerDoc = await _firestore.collection('sellers').doc(sellerId).get();
+    if (sellerDoc.exists) {
+      return Seller.fromDocument(sellerDoc);
+    } else {
+      return null;
+    }
+  }
+
   // Fetch products for a seller
   Future<List<Product>> fetchProducts(String sellerId) async {
     final snapshot = await _firestore

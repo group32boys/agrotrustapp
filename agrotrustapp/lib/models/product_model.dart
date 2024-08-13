@@ -7,6 +7,7 @@ class Product {
   final String image;
   final double price;
   final String units;
+  final String sellerId;
 
   Product({
     required this.id,
@@ -15,6 +16,7 @@ class Product {
     required this.image,
     required this.price,
     required this.units,
+    required this.sellerId,
   });
 
   factory Product.fromDocument(DocumentSnapshot doc) {
@@ -26,6 +28,7 @@ class Product {
       image: data['image'] ?? '',
       price: (data['price'] as num?)?.toDouble() ?? 0.0,
       units: data['units'] ?? 'units',
+      sellerId: data['sellerId'] ?? 'Unknown',
     );
   }
 
@@ -36,6 +39,7 @@ class Product {
       'imageUrl': image,
       'price': price,
       'unit': units,
+      'sellerId': sellerId,
     };
   }
 }
