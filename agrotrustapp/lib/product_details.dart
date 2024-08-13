@@ -11,6 +11,7 @@ class ProductDetailScreen extends StatelessWidget {
 
   ProductDetailScreen({super.key, required this.product});
 
+
   Future<void> _orderProduct(BuildContext context) async {
     try {
       final seller = await _firebaseService.fetchSellerById(product.sellerId);
@@ -44,12 +45,17 @@ class ProductDetailScreen extends StatelessWidget {
     }
   }
 
+  
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Details'),
         backgroundColor: Colors.green,
+
+       
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -87,13 +93,12 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
+
               'Price: Ugx ${product.price.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18, color: Colors.teal, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Unit: ${product.units}',
-              style: const TextStyle(fontSize: 18, color: Colors.teal),
+              'Price: \$${product.price.toStringAsFixed(2)}',
+
+              
+
             ),
             const SizedBox(height: 16),
             Center(
@@ -105,6 +110,7 @@ class ProductDetailScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
               ),
+
             ),
           ],
         ),
