@@ -178,6 +178,13 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.search, color: Colors.green),
+              title: const Text('Search'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.history, color: Colors.green),
               title: const Text('History'),
               onTap: () {

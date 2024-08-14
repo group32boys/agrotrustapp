@@ -20,7 +20,10 @@ class ProductScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Products'),
 
+        
+
         backgroundColor: Colors.green,
+
 
         elevation: 0,
       ),
@@ -76,7 +79,9 @@ class ProductScreen extends StatelessWidget {
                   ),
                   trailing: Text(
 
+
                     ' Ugx ${product.price.toStringAsFixed(2)}',
+
 
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,

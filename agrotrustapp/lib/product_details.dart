@@ -48,12 +48,14 @@ class ProductDetailScreen extends StatelessWidget {
   
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Details'),
         backgroundColor: Colors.green,
+
 
        
       ),
@@ -95,9 +97,7 @@ class ProductDetailScreen extends StatelessWidget {
             Text(
 
               'Price: Ugx ${product.price.toStringAsFixed(2)}',
-              'Price: \$${product.price.toStringAsFixed(2)}',
-
-              
+              style: const TextStyle(fontSize: 18, color: Colors.teal, fontWeight: FontWeight.bold),
 
             ),
             const SizedBox(height: 16),
@@ -111,6 +111,17 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
 
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _orderProduct(context),
+                child: const Text('Order'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                ),
+              ),
             ),
           ],
         ),
