@@ -19,7 +19,12 @@ class ProductScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Products'),
+
+        
+
         backgroundColor: Colors.green,
+
+
         elevation: 0,
       ),
       body: FutureBuilder<List<Product>>(
@@ -73,7 +78,11 @@ class ProductScreen extends StatelessWidget {
                     style: const TextStyle(color: Colors.black54),
                   ),
                   trailing: Text(
+
+
                     ' Ugx ${product.price.toStringAsFixed(2)}',
+
+
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.teal,

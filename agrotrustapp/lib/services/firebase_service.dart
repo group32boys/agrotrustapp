@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:agrotrustapp/models/seller.dart';
 import 'package:agrotrustapp/models/product_model.dart';
 
@@ -71,29 +74,35 @@ class FirebaseService {
   }
 
   // Update seller rating
-  Future<void> updateSellerRating(String sellerId, double rating, String feedback) async {
+  Future<void> updateSellerRating(String sellerId, double rating, String feedback, String orderId) async {
     final sellerRef = _firestore.collection('sellers').doc(sellerId);
 
-    final sellerDoc = await sellerRef.get();
-    final data = sellerDoc.data();
+    await _firestore.runTransaction((transaction) async {
+      final sellerSnapshot = await transaction.get(sellerRef);
 
-    if (data != null) {
-      final currentRating = data['rating'] as num? ?? 0.0;
-      final numberOfRatings = data['numberOfRatings'] as int? ?? 0;
+      if (!sellerSnapshot.exists) {
+        throw Exception("Seller not found!");
+      }
 
-      final newRating = ((currentRating * numberOfRatings) + rating) / (numberOfRatings + 1);
+      final currentRating = sellerSnapshot.get('rating') ?? 0.0;
+      final numberOfRatings = sellerSnapshot.get('numberOfRatings') ?? 0;
 
-      await sellerRef.update({
+      final newNumberOfRatings = numberOfRatings + 1;
+      final newRating =
+          ((currentRating * numberOfRatings) + rating) / newNumberOfRatings;
+
+      transaction.update(sellerRef, {
         'rating': newRating,
-        'numberOfRatings': numberOfRatings + 1,
-        'feedback': FieldValue.arrayUnion([feedback]),
+        'numberOfRatings': newNumberOfRatings,
       });
-    } else {
-      await sellerRef.set({
+
+      final feedbackRef = sellerRef.collection('feedback').doc();
+      transaction.set(feedbackRef, {
         'rating': rating,
-        'numberOfRatings': 1,
-        'feedback': [feedback],
+        'feedback': feedback,
+        'orderId': orderId,
+        'timestamp': FieldValue.serverTimestamp(),
       });
-    }
+    });
   }
 }
