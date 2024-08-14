@@ -2,7 +2,7 @@
 
 Agrotrust ia a flutter pplication designed to help farmer find good quality agrochemicals and trusted sellers based on their locations.
 
-#Features:
+# Features:
 -Location-based search for agrochemical products
 -Connection to trusted sellers
 -Detailed product information
