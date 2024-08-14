@@ -15,6 +15,7 @@ import 'services/firebase_service.dart';
 import 'services/location_services.dart';
 import 'settings.dart';
 import 'theme.dart';
+import 'package:agrotrustapp/search.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -102,10 +103,15 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.pushReplacement(
           context,
+          MaterialPageRoute(builder: (context) => const SearchScreen()),
+        );
+      case 2:
+        Navigator.pushReplacement(
+          context,
           MaterialPageRoute(builder: (context) => const HistoryScreen()),
         );
         break;
-      case 2:
+      case 3:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ProfilePage()),
@@ -179,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.search, color: Colors.green),
-              title: const Text('Search'),
+              title: const Text('search'),
               onTap: () {
                 Navigator.pop(context);
               },

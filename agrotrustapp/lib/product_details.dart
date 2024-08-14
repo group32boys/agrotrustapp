@@ -112,17 +112,7 @@ class ProductDetailScreen extends StatelessWidget {
               ),
 
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: ElevatedButton(
-                onPressed: () => _orderProduct(context),
-                child: const Text('Order'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                ),
-              ),
-            ),
+            
           ],
         ),
       ),
