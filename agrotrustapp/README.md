@@ -1,16 +1,30 @@
 # agrotrustapp
 
-A new Flutter project.
+Agrotrust ia a flutter pplication designed to help farmer find good quality agrochemicals and trusted sellers based on their locations.
 
-## Getting Started
+##Features:
+-Location-based search for agrochemical products
+-Connection to trusted sellers
+-Detailed product information
+-User reviews and ratings
 
-This project is a starting point for a Flutter application.
+## Usage
+1. Open the Agrotrust app
+2. Signup or login to your account
+3. Click on the seller near you usually at the top most, get directions on the map up.
+4. View detailed information about the products offered by the seller
+5. Connect with the seller by clicking on order button to make purchases
 
-A few resources to get you started if this is your first Flutter project:
+## User Stories
+| UserStory Id | Description | Status |
+|--------------|-------------|--------|
+| 1            | As a buyer, i want to find the nearest seller with trusted chemicals for my crops | Completed |
+| 2            | As a seller, i want to list my product with description, prices, images and units for sale | complete |
+| 3            | As an admin, i want to control fake products sold to farmers | Complete |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Contact
+www.kipaaluderrick@gmail.com
+www.jsvico@gmail.com
+www.wamalaabdul@gmail.com
+www.sharif@gmail.com
+www.nathan@gmail.com

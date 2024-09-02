@@ -11,6 +11,7 @@ class SellerDetailsScreen extends StatefulWidget {
   const SellerDetailsScreen({required this.seller, super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _SellerDetailsScreenState createState() => _SellerDetailsScreenState();
 }
 
